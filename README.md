@@ -1,7 +1,7 @@
 # scrollEvents
 A pure JavaScript library to easily handle scroll events.
 
-scrollEvents gives you a quick set of functions to use to be up and running in no time with `onscroll` events.
+`scrollEvents` gives you a quick set of functions to be up and running in no time with `onscroll` events.
 
 Here is an example of something you could do:
 

@@ -15,8 +15,8 @@ This will cause the change to occur once the user has scrolled down `50` pixels.
 
 More options will be available in the future.
 
-scrollEvents is available via CDN (version 0.3.0):
+scrollEvents is available via CDN (version 0.4.0):
 
-    //cdn.rawgit.com/ryanpcmcquen/scrollEvents/bcd2f6e074f9f2102236f42458c48c31870e7e2c/scrollEvents.js
+    //cdn.rawgit.com/ryanpcmcquen/scrollEvents/9b37f3b889f6f650c61a47891b3ef5401a3c2997/scrollEvents.js
 
 Enjoy!

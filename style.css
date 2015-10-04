@@ -3,6 +3,7 @@
 }
 
 .foo {
+  position: fixed;
   font-size: 50px;
   height: 400px;
   color: azure;

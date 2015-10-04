@@ -1,4 +1,4 @@
-// scrollEvents version 0.3.0
+// scrollEvents version 0.4.0
 //
 // Ryan P.C. McQuen | Everett, WA | ryan.q@linux.com
 //
@@ -24,16 +24,22 @@ if (scrollEvents) {
   throw "You already have a global variable named scrollEvents, please rename scrollEvents.";
 } else {
   var scrollEvents = {
-    change: function (selectors, breakPoint, property, initialValue, changedValue) {
-      if (arguments.length < 5) {
-        throw 'You have not supplied all parameters to scrollEvents.change, this may cause weird or unexpected behavior. The parameters are: selectors, breakPoint, property, initialValue, changedValue.';
+    change: function (selectors, property, initialValue, changedValue, breakPoint) {
+      // throw an error if not enough parameters are supplied
+      if (arguments.length < 4) {
+        throw 'You have not supplied all parameters to scrollEvents.change, this may cause weird or unexpected behavior. The parameters are: selectors, property, initialValue, changedValue, breakPoint. Note that breakPoint is optional and the default is 10.';
       }
-      //window.onscroll = function (event) {
+      // set breakPoint if parameter is not supplied
+      var breakPoint = breakPoint || 10;
+      // using window.addEventListener allows multiple calls to scrollEvents,
+      // as opposed to using window.onscroll
       window.addEventListener("scroll", function (event) {
         // grab the selectors and convert them into an array so we can use forEach()
         var itemArray = [].slice.call(document.querySelectorAll(selectors));
         // window.pageYOffset has better compatibility than document.body.scrollTop
         var scrollPos = window.pageYOffset;
+        // check the scroll position and activate the changes,
+        // otherwise return to the initialValue
         if (scrollPos > breakPoint) {
           itemArray.forEach(function (i) {
             i.setAttribute("style", property + ": " + changedValue + ";");

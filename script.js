@@ -1,1 +1,1 @@
-scrollEvents.change("foo", 10, "height", "400px", "800px");
+scrollEvents.change(".foo", 10, "height", "400px", "800px");

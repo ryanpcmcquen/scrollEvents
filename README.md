@@ -28,18 +28,18 @@ This would cause the change to happen after scrolling down `200` pixels.
 Note that `changeStyle` uses `.style[property]` to change css, so camelCasing is necessary. For instance: `backgroundColor` will work, while `background-color` will not.
 
 
-`scrollEvents` is available via RawGit CDN (version `0.5.0`).
+`scrollEvents` is available via RawGit CDN (version `0.5.1`).
 
 Development:
 
-    //cdn.rawgit.com/ryanpcmcquen/scrollEvents/9afabc0e39175b0f8f0f4c530497469b2c8e9593/scrollEvents.js
+    //cdn.rawgit.com/ryanpcmcquen/scrollEvents/dfcf79a3ee270df7a5503925189640ec71438dfa/scrollEvents.js
 
 Minified (less than 2kB!):
 
-    //cdn.rawgit.com/ryanpcmcquen/scrollEvents/c837fd8d2f9d6d11292af668929990ede956094b/scrollEvents.min.js
+    //cdn.rawgit.com/ryanpcmcquen/scrollEvents/dfcf79a3ee270df7a5503925189640ec71438dfa/scrollEvents.min.js
 
 
-If you want to play with code you can fork this fiddle:
+If you want to play with `scrollEvents` you can fork this fiddle:
 
 https://jsfiddle.net/ryanpcmcquen/yc7oowrt/
 

@@ -11,8 +11,8 @@ This will find all elements with the `foo` class, and change their height from `
 
 More options will be available in the future.
 
-scrollEvents is available via CDN (version 0.2.1):
+scrollEvents is available via CDN (version 0.3.0):
 
-    //cdn.rawgit.com/ryanpcmcquen/scrollEvents/8f60b678328a96bf920c533a5d6ebc8528ca7c67/scrollEvents.js
+    //cdn.rawgit.com/ryanpcmcquen/scrollEvents/bcd2f6e074f9f2102236f42458c48c31870e7e2c/scrollEvents.js
 
 Enjoy!

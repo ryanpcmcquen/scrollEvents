@@ -4,7 +4,8 @@
 
 .foo {
   position: fixed;
-  font-size: 50px;
+  left: 0;
+  font-size: 3rem;
   height: 25%;
   width: 48%;
   color: azure;
@@ -14,7 +15,7 @@
 .bar {
   position: fixed;
   right: 0;
-  font-size: 50px;
+  font-size: 3rem;
   height: 25%;
   width: 48%;
   color: azure;
@@ -27,6 +28,6 @@
 }
 
 .scrolled {
-  background-color: #008cff;
   height: 75%;
+  background-color: #008cff;
 }

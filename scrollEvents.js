@@ -21,14 +21,14 @@
 // <http://www.gnu.org/licenses/>.
 //
 if (scrollEvents) {
-  throw "You already have a global variable named scrollEvents, please rename scrollEvents.";
+  throw new Error('You already have a global variable named scrollEvents, please rename scrollEvents.');
 } else {
   var scrollEvents = {
     breakPoint: 10,
     changeStyle: function (selectors, property, initialValue, changedValue, breakPoint) {
       // throw an error if not enough parameters are supplied
       if (arguments.length < 4) {
-        throw 'You have not supplied all parameters to scrollEvents.changeStyle, this may cause weird or unexpected behavior. The parameters are: selectors, property, initialValue, changedValue, breakPoint. Note that breakPoint is optional and the default is 10.';
+        throw new Error('You have not supplied all parameters to scrollEvents.changeStyle, this may cause weird or unexpected behavior. The parameters are: selectors, property, initialValue, changedValue, breakPoint. Note that breakPoint is optional and the default is 10.');
       }
       // set breakPoint if parameter is not supplied
       var breakPoint = breakPoint || this.breakPoint;
@@ -58,7 +58,7 @@ if (scrollEvents) {
     changeText: function (selectors, initialValue, changedValue, breakPoint) {
       // throw an error if not enough parameters are supplied
       if (arguments.length < 3) {
-        throw 'You have not supplied all parameters to scrollEvents.changeText, this may cause weird or unexpected behavior. The parameters are: selectors, initialValue, changedValue, breakPoint. Note that breakPoint is optional and the default is 10.';
+        throw new Error('You have not supplied all parameters to scrollEvents.changeText, this may cause weird or unexpected behavior. The parameters are: selectors, initialValue, changedValue, breakPoint. Note that breakPoint is optional and the default is 10.');
       }
       // set breakPoint if parameter is not supplied
       var breakPoint = breakPoint || this.breakPoint;

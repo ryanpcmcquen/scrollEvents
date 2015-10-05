@@ -3,6 +3,8 @@ A pure JavaScript library to do stuff on scroll events.
 
 `scrollEvents` gets you up and running in no time with scroll events.
 
+=====
+
 Here is an example of something you could do:
 
     scrollEvents.changeStyle(".foo", "height", "400px", "800px");
@@ -12,6 +14,10 @@ This will find all elements with the `foo` class, and change their height from `
     scrollEvents.changeStyle(".foo", "height", "400px", "800px", 50);
 
 This will cause the change to occur once the user has scrolled down `50` pixels.
+
+Note that `changeStyle` uses `.style[property]` to change css, so camelCasing is necessary. For instance: `backgroundColor` will work, while `background-color` will not.
+
+=====
 
 You could also change the text of an element using `scrollEvents.changeText`, for example:
 
@@ -25,18 +31,23 @@ This would cause the change to happen after scrolling down `200` pixels.
 
 `scrollEvents` is still very young so syntax changes may happen (I will try to avoid them if possible), so always check the docs and the code.
 
-Note that `changeStyle` uses `.style[property]` to change css, so camelCasing is necessary. For instance: `backgroundColor` will work, while `background-color` will not.
+=====
 
+I think you get the idea now. `changeClass` is also available, and looks like this:
 
-`scrollEvents` is available via RawGit CDN (version `0.5.1`).
+    scrollEvents.changeClass('.bar', 'nonscrolled', 'scrolled');
+
+Pull requests and issues are welcome!
+
+`scrollEvents` is available via RawGit CDN (version `0.6.0`).
 
 Development:
 
-    //cdn.rawgit.com/ryanpcmcquen/scrollEvents/dfcf79a3ee270df7a5503925189640ec71438dfa/scrollEvents.js
+    //cdn.rawgit.com/ryanpcmcquen/scrollEvents/87c4388358d54bc228302602070be911939b1689/scrollEvents.js
 
-Minified (less than 2kB!):
+Minified (just over 2kB!):
 
-    //cdn.rawgit.com/ryanpcmcquen/scrollEvents/dfcf79a3ee270df7a5503925189640ec71438dfa/scrollEvents.min.js
+    //cdn.rawgit.com/ryanpcmcquen/scrollEvents/87c4388358d54bc228302602070be911939b1689/scrollEvents.min.js
 
 
 If you want to play with `scrollEvents` you can fork this fiddle:

@@ -3,6 +3,8 @@ A pure JavaScript library to do stuff on scroll events.
 
 `scrollEvents` gets you up and running in no time with scroll events.
 
+![Demo](https://ryanpcmcquen.org/scrollEvents/scrollEventsDemo.gif)
+
 =====
 
 Here is an example of something you could do:

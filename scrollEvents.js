@@ -61,7 +61,20 @@ if (scrollEvents) {
 
         addScrollListener(selectors, function changeTextContent(el, value) {
           el.textContent = value;
-        }, initialValue, changedValue, breakPoint || this.breakPoint);        
+        }, initialValue, changedValue, breakPoint || this.breakPoint);
+      },
+
+      changeClass: function(selectors, initialValue, changedValue, breakPoint) {
+        if (arguments.length < 3) {
+          throw new Error('You have not supplied all parameters to scrollEvents.changeClass, this may cause weird or unexpected behavior. The parameters are: selectors, initialValue, changedValue, breakPoint. Note that breakPoint is optional and the default is 10.');
+        }
+
+        addScrollListener(selectors, function changeClass(el, value) {
+          var classes = el.classList,
+            initial = initialValue === value;
+          classes.toggle(initialValue, initial);
+          classes.toggle(changedValue, !initial);          
+        }, initialValue, changedValue, breakPoint || this.breakPoint);
       }
     };
   }(window, document));

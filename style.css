@@ -9,3 +9,19 @@
   color: azure;
   background-color: #008cff;
 }
+
+.bar {
+  position: fixed;
+  right: 0;
+  font-size: 50px;
+  height: 400px;
+  background-color: #008cff; 
+}
+
+.scrolled {
+  color: green;
+}
+
+.nonscrolled {
+  color: red;
+}

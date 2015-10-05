@@ -5,7 +5,8 @@
 .foo {
   position: fixed;
   font-size: 50px;
-  height: 400px;
+  height: 25%;
+  width: 48%;
   color: azure;
   background-color: #008cff;
 }
@@ -14,14 +15,18 @@
   position: fixed;
   right: 0;
   font-size: 50px;
-  height: 400px;
-  background-color: #008cff; 
-}
-
-.scrolled {
-  color: green;
+  height: 25%;
+  width: 48%;
+  color: azure;
+  background-color: #00ad85;
 }
 
 .nonscrolled {
-  color: red;
+  height: 25%;
+  background-color: #00ad85;
+}
+
+.scrolled {
+  background-color: #008cff;
+  height: 75%;
 }

@@ -1,4 +1,4 @@
-// scrollEvents version 0.5.1
+// scrollEvents version 0.6.0
 //
 // Ryan P.C. McQuen | Everett, WA | ryan.q@linux.com
 //
@@ -21,20 +21,22 @@
 // <http://www.gnu.org/licenses/>.
 //
 if (scrollEvents) {
+  // better to throw a new Error than just throw alone
   throw new Error('You already have a global variable named scrollEvents, please rename scrollEvents.');
 } else {
-  var scrollEvents = (function scrollEvents(win, doc){
+  // setting it to a function allows a lot less code duplication
+  var scrollEvents = (function scrollEvents(win, doc) {
+    // alias forEach since we use it so much
     var each = scrollEvents.call.bind([].forEach),
-      //select all elements matching selector
-      qsa = function(selector) {
+      // select all elements matching selector
+      qsa = function (selector) {
         return doc.querySelectorAll(selector);
-      },      
-      //add yet another window onscroll event listener
-      addScrollListener = function(selectors, fn, initialValue, changedValue, breakPoint) {
-        win.addEventListener('scroll', function() {          
+      },
+      // add yet another window scroll event listener
+      addScrollListener = function (selectors, fn, initialValue, changedValue, breakPoint) {
+        win.addEventListener('scroll', function () {
           var value = win.pageYOffset > breakPoint ? changedValue : initialValue;
-          
-          //apply fn to each selected element with the current value
+          // apply fn to each selected element with the current value
           each(qsa(selectors), function apply(el) {
             fn(el, value);
           });
@@ -44,12 +46,23 @@ if (scrollEvents) {
     return {
       breakPoint: 10,
 
+      changeClass: function (selectors, initialValue, changedValue, breakPoint) {
+        if (arguments.length < 3) {
+          throw new Error('You have not supplied all parameters to scrollEvents.changeClass, this may cause weird or unexpected behavior. The parameters are: selectors, initialValue, changedValue, breakPoint. Note that breakPoint is optional and the default is 10.');
+        }
+        addScrollListener(selectors, function changeClass(el, value) {
+          var classes = el.classList,
+            initial = initialValue === value;
+          classes.toggle(initialValue, initial);
+          classes.toggle(changedValue, !initial);
+        }, initialValue, changedValue, breakPoint || this.breakPoint);
+      },
+
       changeStyle: function (selectors, property, initialValue, changedValue, breakPoint) {
         if (arguments.length < 4) {
           throw new Error('You have not supplied all parameters to scrollEvents.changeStyle, this may cause weird or unexpected behavior. The parameters are: selectors, property, initialValue, changedValue, breakPoint. Note that breakPoint is optional and the default is 10.');
         }
-
-        addScrollListener(selectors, function changeStyleProperty(el, value){
+        addScrollListener(selectors, function changeStyleProperty(el, value) {
           el.style[property] = value;
         }, initialValue, changedValue, breakPoint || this.breakPoint);
       },
@@ -58,24 +71,11 @@ if (scrollEvents) {
         if (arguments.length < 3) {
           throw new Error('You have not supplied all parameters to scrollEvents.changeText, this may cause weird or unexpected behavior. The parameters are: selectors, initialValue, changedValue, breakPoint. Note that breakPoint is optional and the default is 10.');
         }
-
         addScrollListener(selectors, function changeTextContent(el, value) {
           el.textContent = value;
         }, initialValue, changedValue, breakPoint || this.breakPoint);
-      },
-
-      changeClass: function(selectors, initialValue, changedValue, breakPoint) {
-        if (arguments.length < 3) {
-          throw new Error('You have not supplied all parameters to scrollEvents.changeClass, this may cause weird or unexpected behavior. The parameters are: selectors, initialValue, changedValue, breakPoint. Note that breakPoint is optional and the default is 10.');
-        }
-
-        addScrollListener(selectors, function changeClass(el, value) {
-          var classes = el.classList,
-            initial = initialValue === value;
-          classes.toggle(initialValue, initial);
-          classes.toggle(changedValue, !initial);          
-        }, initialValue, changedValue, breakPoint || this.breakPoint);
       }
+
     };
-  }(window, document));
+  })(window, document);
 }

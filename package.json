@@ -1,0 +1,19 @@
+{
+  "name": "scrollEvents",
+  "version": "0.6.0",
+  "description": "A pure JavaScript library to do stuff on scroll events.",
+  "main": "scrollEvents.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ryanpcmcquen/scrollEvents.git"
+  },
+  "author": "ryanpcmcquen",
+  "license": "GPLv2",
+  "bugs": {
+    "url": "https://github.com/ryanpcmcquen/scrollEvents/issues"
+  },
+  "homepage": "https://ryanpcmcquen.org/scrollEvents/"
+}

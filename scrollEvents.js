@@ -19,63 +19,93 @@
 // You may have received a copy of the GNU General Public License along
 // with this program (most likely, a file named COPYING).  If not, see
 // <http://www.gnu.org/licenses/>.
-//
-if (scrollEvents) {
-  // better to throw a new Error than just throw alone
-  throw new Error('You already have a global variable named scrollEvents, please rename scrollEvents.');
-} else {
-  // setting it to a function allows a lot less code duplication
-  var scrollEvents = (function scrollEvents(win, doc) {
-    // alias forEach since we use it so much
-    var each = scrollEvents.call.bind([].forEach),
-      // select all elements matching selector
-      qsa = function (selector) {
-        return doc.querySelectorAll(selector);
-      },
-      // add yet another window scroll event listener
-      addScrollListener = function (selectors, fn, initialValue, changedValue, breakPoint) {
-        win.addEventListener('scroll', function () {
-          var value = win.pageYOffset > breakPoint ? changedValue : initialValue;
-          // apply fn to each selected element with the current value
-          each(qsa(selectors), function apply(el) {
-            fn(el, value);
-          });
+
+(function(win, doc) {
+  'use strict';  
+  if (win.scrollEvents) {
+    // better to throw a new Error than just throw alone
+    throw new Error('You already have a global variable named scrollEvents, please rename scrollEvents.');
+  }
+
+  // select all elements matching selector
+  function qsa (selector) {
+      return doc.querySelectorAll(selector);
+  }
+
+  // alias forEach since we use it so much
+  var each = qsa.call.bind([].forEach),
+    //array to hold all event listeners.
+    listeners = [];
+
+  //add another scroll event listener
+  function addScrollListener (selectors, fn, initialValue, changedValue, breakPoint) {  
+    if(!listeners.length) { //no listeners so far
+      //add single dom event listener that will run all registered listeners
+      win.addEventListener('scroll', each.bind(null, listeners, function(listener) {
+        listener();
+      }));
+    }
+
+    //previous value
+    var previous;
+
+    function listener() {
+      var current = win.pageYOffset > breakPoint ? changedValue : initialValue;
+
+      if(previous !== current) { //value was actually changed
+        previous = current; //save value for the next call
+        // apply fn to each selected element with the current value
+        each(qsa(selectors), function apply(el) {
+          fn(el, current);
         });
-      };
-
-    return {
-      breakPoint: 10,
-
-      changeClass: function (selectors, initialValue, changedValue, breakPoint) {
-        if (arguments.length < 3) {
-          throw new Error('You have not supplied all parameters to scrollEvents.changeClass, this may cause weird or unexpected behavior. The parameters are: selectors, initialValue, changedValue, breakPoint. Note that breakPoint is optional and the default is 10.');
-        }
-        addScrollListener(selectors, function changeClass(el, value) {
-          var classes = el.classList,
-            initial = initialValue === value;
-          classes.toggle(initialValue, initial);
-          classes.toggle(changedValue, !initial);
-        }, initialValue, changedValue, breakPoint || this.breakPoint);
-      },
-
-      changeStyle: function (selectors, property, initialValue, changedValue, breakPoint) {
-        if (arguments.length < 4) {
-          throw new Error('You have not supplied all parameters to scrollEvents.changeStyle, this may cause weird or unexpected behavior. The parameters are: selectors, property, initialValue, changedValue, breakPoint. Note that breakPoint is optional and the default is 10.');
-        }
-        addScrollListener(selectors, function changeStyleProperty(el, value) {
-          el.style[property] = value;
-        }, initialValue, changedValue, breakPoint || this.breakPoint);
-      },
-
-      changeText: function (selectors, initialValue, changedValue, breakPoint) {
-        if (arguments.length < 3) {
-          throw new Error('You have not supplied all parameters to scrollEvents.changeText, this may cause weird or unexpected behavior. The parameters are: selectors, initialValue, changedValue, breakPoint. Note that breakPoint is optional and the default is 10.');
-        }
-        addScrollListener(selectors, function changeTextContent(el, value) {
-          el.textContent = value;
-        }, initialValue, changedValue, breakPoint || this.breakPoint);
       }
+    }
 
+    //register a listener
+    listeners.push(listener);
+
+    //remove scroll listener when called
+    return function removeScrollListener() {
+      var index = listeners.indexOf(listener);
+
+      if(index > -1) { //listener still there
+        listeners.splice(index, 1); //remove it
+      }
     };
-  })(window, document);
-}
+  }
+
+  //export to global
+  win.scrollEvents = {
+    breakPoint: 10,
+
+    changeClass: function (selectors, initialValue, changedValue, breakPoint) {
+      if (arguments.length < 3) {
+        throw new Error('You have not supplied all parameters to scrollEvents.changeClass, this may cause weird or unexpected behavior. The parameters are: selectors, initialValue, changedValue, breakPoint. Note that breakPoint is optional and the default is 10.');
+      }
+      return addScrollListener(selectors, function changeClass(el, value) {
+        var classes = el.classList,
+          initial = initialValue === value;
+        classes.toggle(initialValue, initial);
+        classes.toggle(changedValue, !initial);
+      }, initialValue, changedValue, breakPoint || this.breakPoint);
+    },
+
+    changeStyle: function (selectors, property, initialValue, changedValue, breakPoint) {
+      if (arguments.length < 4) {
+        throw new Error('You have not supplied all parameters to scrollEvents.changeStyle, this may cause weird or unexpected behavior. The parameters are: selectors, property, initialValue, changedValue, breakPoint. Note that breakPoint is optional and the default is 10.');
+      }
+      return addScrollListener(selectors, function changeStyleProperty(el, value) {
+        el.style[property] = value;
+      }, initialValue, changedValue, breakPoint || this.breakPoint);
+    },
+
+    changeText: function (selectors, initialValue, changedValue, breakPoint) {
+      if (arguments.length < 3) {
+        throw new Error('You have not supplied all parameters to scrollEvents.changeText, this may cause weird or unexpected behavior. The parameters are: selectors, initialValue, changedValue, breakPoint. Note that breakPoint is optional and the default is 10.');
+      }
+      return addScrollListener(selectors, function changeTextContent(el, value) {
+        el.textContent = value;
+      }, initialValue, changedValue, breakPoint || this.breakPoint);
+    }
+  }; 
+})(window, document);

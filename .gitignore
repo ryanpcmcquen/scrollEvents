@@ -1,3 +1,6 @@
 ## sublime files
 *.sublime-project
 *.sublime-workspace
+
+## node modules folder
+node_modules

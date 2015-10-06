@@ -33,11 +33,20 @@
   }
 
   // alias forEach since we use it so much
-  var each = qsa.call.bind([].forEach);
+  var each = qsa.call.bind([].forEach),
+    //array to hold all event listeners.
+    listeners = [];
 
   //add another scroll event listener
   function addScrollListener (selectors, fn, initialValue, changedValue, breakPoint) {
-    win.addEventListener('scroll', function () {
+    if(!listeners.length) { //no listeners so far
+      //add single dom event listener that will run all registered listeners
+      win.addEventListener('scroll', each.bind(null, listeners, function(listener) {
+        listener();
+      }));
+    }
+
+    listeners.push(function listener() {
       var value = win.pageYOffset > breakPoint ? changedValue : initialValue;
       // apply fn to each selected element with the current value
       each(qsa(selectors), function apply(el) {

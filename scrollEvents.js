@@ -61,9 +61,20 @@
       }
     }
 
+    //register a listener
     listeners.push(listener);
+
+    //remove scroll listener when called
+    return function removeScrollListener() {
+      var index = listeners.indexOf(listener);
+
+      if(index > -1) { //listener still there
+        listeners.splice(index, 1); //remove it
+      }
+    };
   }
 
+  //export to global
   win.scrollEvents = {
     breakPoint: 10,
 
@@ -71,7 +82,7 @@
       if (arguments.length < 3) {
         throw new Error('You have not supplied all parameters to scrollEvents.changeClass, this may cause weird or unexpected behavior. The parameters are: selectors, initialValue, changedValue, breakPoint. Note that breakPoint is optional and the default is 10.');
       }
-      addScrollListener(selectors, function changeClass(el, value) {
+      return addScrollListener(selectors, function changeClass(el, value) {
         var classes = el.classList,
           initial = initialValue === value;
         classes.toggle(initialValue, initial);
@@ -83,7 +94,7 @@
       if (arguments.length < 4) {
         throw new Error('You have not supplied all parameters to scrollEvents.changeStyle, this may cause weird or unexpected behavior. The parameters are: selectors, property, initialValue, changedValue, breakPoint. Note that breakPoint is optional and the default is 10.');
       }
-      addScrollListener(selectors, function changeStyleProperty(el, value) {
+      return addScrollListener(selectors, function changeStyleProperty(el, value) {
         el.style[property] = value;
       }, initialValue, changedValue, breakPoint || this.breakPoint);
     },
@@ -92,7 +103,7 @@
       if (arguments.length < 3) {
         throw new Error('You have not supplied all parameters to scrollEvents.changeText, this may cause weird or unexpected behavior. The parameters are: selectors, initialValue, changedValue, breakPoint. Note that breakPoint is optional and the default is 10.');
       }
-      addScrollListener(selectors, function changeTextContent(el, value) {
+      return addScrollListener(selectors, function changeTextContent(el, value) {
         el.textContent = value;
       }, initialValue, changedValue, breakPoint || this.breakPoint);
     }

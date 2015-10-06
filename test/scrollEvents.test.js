@@ -83,6 +83,17 @@ describe('scrollEvents', function() {
           container.style.color.should.be.equal('blue');
         }).then(done, done);
       });
+
+      it('should return unbinder', function(done) {
+        var unbinder = scrollEvents.changeStyle('#' + id, 'color', 'white', 'yellow');
+        container.style.color = 'black';
+        unbinder.should.be.a('function');
+        unbinder();
+        window.scrollBy(0, 100);
+        delay(function(){
+          container.style.color.should.be.equal('black');
+        }).then(done, done);
+      });
     });    
   });
 
@@ -145,6 +156,17 @@ describe('scrollEvents', function() {
           container.textContent.should.equal('nonscrolled');
         }).then(done, done);
       });
+
+      it('should return unbinder', function(done) {
+        var unbinder = scrollEvents.changeText('#' + id, 'nonscrolled', 'scrolled');
+        unbinder.should.be.a('function');
+        unbinder();
+        window.scrollBy(0, 100);
+        delay(function(){
+          container.innerText.should.be.equal('nonscrolled');
+        }).then(done, done);
+      });
+
     });    
   });
 
@@ -211,9 +233,19 @@ describe('scrollEvents', function() {
           container.classList.contains('nonscrolled').should.be.true;
         }).then(done, done);
       });
+
+      it('should return unbinder', function(done) {
+        var unbinder = scrollEvents.changeClass('#' + id, 'nonscrolled', 'scrolled');
+        unbinder.should.be.a('function');
+        unbinder();
+
+        window.scrollBy(0, 100);
+        delay(function(){
+          container.classList.contains('scrolled').should.be.false;
+          container.classList.contains('nonscrolled').should.be.true;
+        }).then(done, done);
+      });
+
     });
-  });
-
-
- 
+  }); 
 });

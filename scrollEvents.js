@@ -38,7 +38,7 @@
     listeners = [];
 
   //add another scroll event listener
-  function addScrollListener (selectors, fn, initialValue, changedValue, breakPoint) {
+  function addScrollListener (selectors, fn, initialValue, changedValue, breakPoint) {  
     if(!listeners.length) { //no listeners so far
       //add single dom event listener that will run all registered listeners
       win.addEventListener('scroll', each.bind(null, listeners, function(listener) {
@@ -46,13 +46,22 @@
       }));
     }
 
-    listeners.push(function listener() {
-      var value = win.pageYOffset > breakPoint ? changedValue : initialValue;
-      // apply fn to each selected element with the current value
-      each(qsa(selectors), function apply(el) {
-        fn(el, value);
-      });
-    });
+    //previous value
+    var previous;
+
+    function listener() {
+      var current = win.pageYOffset > breakPoint ? changedValue : initialValue;
+
+      if(previous !== current) { //value was actually changed
+        previous = current; //save value for the next call
+        // apply fn to each selected element with the current value
+        each(qsa(selectors), function apply(el) {
+          fn(el, current);
+        });
+      }
+    }
+
+    listeners.push(listener);
   }
 
   win.scrollEvents = {

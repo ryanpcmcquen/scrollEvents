@@ -121,7 +121,8 @@
         initial = initialValue === value;
         classes.toggle(initialValue, initial);
         classes.toggle(changedValue, !initial);
-      }, initialValue, changedValue, breakPoint || this.breakPoint);
+      }, initialValue, changedValue, typeof breakPoint === 'string' ? document.querySelector(breakPoint).offsetTop : breakPoint || this.breakPoint);
+
     },
     //
     // changeStyle
@@ -132,7 +133,7 @@
       }
       return addScrollListener(selectors, function changeStyleProperty(el, value) {
         el.style[property] = value;
-      }, initialValue, changedValue, breakPoint || this.breakPoint);
+      }, initialValue, changedValue, typeof breakPoint === 'string' ? document.querySelector(breakPoint).offsetTop : breakPoint || this.breakPoint);
     },
     //
     // changeText
@@ -143,7 +144,7 @@
       }
       return addScrollListener(selectors, function changeTextContent(el, value) {
         el.textContent = value;
-      }, initialValue, changedValue, breakPoint || this.breakPoint);
+      }, initialValue, changedValue, typeof breakPoint === 'string' ? document.querySelector(breakPoint).offsetTop : breakPoint || this.breakPoint);
     }
   };
 })(window, document);

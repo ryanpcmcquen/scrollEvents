@@ -1,4 +1,4 @@
-// scrollEvents version 0.6.0
+// scrollEvents version 0.7.0
 //
 // Ryan P.C. McQuen | Everett, WA | ryan.q@linux.com
 //
@@ -19,65 +19,60 @@
 // You may have received a copy of the GNU General Public License along
 // with this program (most likely, a file named COPYING).  If not, see
 // <http://www.gnu.org/licenses/>.
-
-(function(win, doc) {
-  'use strict';  
+(function (win, doc) {
+  'use strict';
   if (win.scrollEvents) {
-    // better to throw a new Error than just throw alone
-    throw new Error('You already have a global variable named scrollEvents, please rename scrollEvents.');
+    // better to throw a new Error than just a string
+    throw new Error('You already have a global variable named scrollEvents.');
   }
-
   // select all elements matching selector
-  function qsa (selector) {
-      return doc.querySelectorAll(selector);
+  function qsa(selector) {
+    return doc.querySelectorAll(selector);
   }
-
   // alias forEach since we use it so much
   var each = qsa.call.bind([].forEach),
-    //array to hold all event listeners.
+    // array to hold all event listeners
     listeners = [];
-
-  //add another scroll event listener
-  function addScrollListener (selectors, fn, initialValue, changedValue, breakPoint) {  
-    if(!listeners.length) { //no listeners so far
-      //add single dom event listener that will run all registered listeners
-      win.addEventListener('scroll', each.bind(null, listeners, function(listener) {
-        listener();
-      }));
+  // add another scroll event listener
+  function addScrollListener(selectors, fn, initialValue, changedValue, breakPoint) {
+    // no listeners so far
+    if (!listeners.length) {
+      // add single dom event listener that will run all registered listeners
+      win.addEventListener('scroll',
+        each.bind(null, listeners, function (listener) {
+          listener();
+        }));
     }
-
-    //previous value
+    // previous value
     var previous;
 
     function listener() {
       var current = win.pageYOffset > breakPoint ? changedValue : initialValue;
-
-      if(previous !== current) { //value was actually changed
-        previous = current; //save value for the next call
+      // make sure value was actually changed
+      if (previous !== current) {
+        // save value for the next call
+        previous = current;
         // apply fn to each selected element with the current value
         each(qsa(selectors), function apply(el) {
           fn(el, current);
         });
       }
     }
-
-    //register a listener
+    // register a listener
     listeners.push(listener);
-
-    //remove scroll listener when called
+    // remove scroll listener when called
     return function removeScrollListener() {
       var index = listeners.indexOf(listener);
-
-      if(index > -1) { //listener still there
-        listeners.splice(index, 1); //remove it
+      // if the listener is still there,
+      // remove it
+      if (index > -1) {
+        listeners.splice(index, 1);
       }
     };
   }
-
-  //export to global
+  // export to global
   win.scrollEvents = {
     breakPoint: 10,
-
     changeClass: function (selectors, initialValue, changedValue, breakPoint) {
       if (arguments.length < 3) {
         throw new Error('You have not supplied all parameters to scrollEvents.changeClass, this may cause weird or unexpected behavior. The parameters are: selectors, initialValue, changedValue, breakPoint. Note that breakPoint is optional and the default is 10.');
@@ -89,7 +84,6 @@
         classes.toggle(changedValue, !initial);
       }, initialValue, changedValue, breakPoint || this.breakPoint);
     },
-
     changeStyle: function (selectors, property, initialValue, changedValue, breakPoint) {
       if (arguments.length < 4) {
         throw new Error('You have not supplied all parameters to scrollEvents.changeStyle, this may cause weird or unexpected behavior. The parameters are: selectors, property, initialValue, changedValue, breakPoint. Note that breakPoint is optional and the default is 10.');
@@ -98,7 +92,6 @@
         el.style[property] = value;
       }, initialValue, changedValue, breakPoint || this.breakPoint);
     },
-
     changeText: function (selectors, initialValue, changedValue, breakPoint) {
       if (arguments.length < 3) {
         throw new Error('You have not supplied all parameters to scrollEvents.changeText, this may cause weird or unexpected behavior. The parameters are: selectors, initialValue, changedValue, breakPoint. Note that breakPoint is optional and the default is 10.');
@@ -107,5 +100,5 @@
         el.textContent = value;
       }, initialValue, changedValue, breakPoint || this.breakPoint);
     }
-  }; 
+  };
 })(window, document);

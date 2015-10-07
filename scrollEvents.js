@@ -25,6 +25,24 @@
     // better to throw a new Error than just a string
     throw new Error('You already have a global variable named scrollEvents.');
   }
+  // thanks to @jonathansampson
+  function throttle(callback, limit) {
+    // don't wait initially
+    var wait = false;
+    // return a throttled function
+    return function () {
+      // if not waiting, invoke function
+      if (!wait) {
+        callback.call();
+        // prevent future invocations
+        wait = true;
+        // after a perfiod of time allow function to be invoked again
+        setTimeout(function () {
+          wait = false;
+        }, limit);
+      }
+    };
+  }
   // select all elements matching selector
   function qsa(selector) {
     return doc.querySelectorAll(selector);
@@ -38,10 +56,11 @@
     // no listeners so far
     if (!listeners.length) {
       // add single dom event listener that will run all registered listeners
-      win.addEventListener('scroll',
+      throttle(win.addEventListener('scroll',
         each.bind(null, listeners, function (listener) {
           listener();
-        }));
+        })
+      ), 100);
     }
     // previous value
     var previous;

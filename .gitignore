@@ -2,6 +2,6 @@
 *.sublime-project
 *.sublime-workspace
 
-## node modules folder
+## node stuff
 node_modules
 core

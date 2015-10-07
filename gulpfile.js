@@ -13,7 +13,7 @@ var src = './scrollEvents.js',
 /**
  * Minify
  */
-gulp.task('build', function() {
+gulp.task('build', function () {
   return gulp
     .src(src)
     .pipe(size({
@@ -34,7 +34,7 @@ gulp.task('build', function() {
 /**
  * Let's lint the code as all cool kids do.
  */
-gulp.task('lint', function() {
+gulp.task('lint', function () {
   return gulp
     .src(src)
     .pipe(jshint())
@@ -44,14 +44,14 @@ gulp.task('lint', function() {
 /**
  * Watch for changes
  */
-gulp.task('watch', function() {
+gulp.task('watch', function () {
   gulp.watch(src, ['lint', 'build']);
 });
 
 /**
  * Launch karma test runner.
  */
-gulp.task('test', function() {
+gulp.task('test', function () {
   karma.server.start({
     configFile: require('path').join(__dirname, 'karma.conf.js')
   });

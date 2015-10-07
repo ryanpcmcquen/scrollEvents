@@ -1,22 +1,22 @@
 /*jslint node:true*/
 'use strict';
 
-module.exports = function(karma) {
+module.exports = function (karma) {
   karma.set({
     basePath: '',
 
-    frameworks: [ 'mocha', 'chai', 'sinon' ],
+    frameworks: ['mocha', 'chai', 'sinon'],
 
     files: [
       'test/**/[^_]*.js',
       'scrollEvents.js'
     ],
 
-    reporters: [ 'nyan' ],
+    reporters: ['nyan'],
 
     preprocessors: {},
 
-    browsers: [ 'Chrome', 'Firefox' ],
+    browsers: ['Chrome', 'Firefox'],
 
     logLevel: karma.LOG_INFO,
 

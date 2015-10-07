@@ -41,15 +41,15 @@ I think you get the idea now. `changeClass` is also available, and looks like th
 
 Pull requests and issues are welcome!
 
-`scrollEvents` is available via RawGit CDN (version `0.6.0`).
+`scrollEvents` is available via RawGit CDN (version `0.7.0`).
 
 Development:
 
-    //cdn.rawgit.com/ryanpcmcquen/scrollEvents/87c4388358d54bc228302602070be911939b1689/scrollEvents.js
+    //cdn.rawgit.com/ryanpcmcquen/scrollEvents/57315416113628031522d84360563d456aadc104/scrollEvents.js
 
-Minified (just over 2kB!):
+Minified (under 2kB!):
 
-    //cdn.rawgit.com/ryanpcmcquen/scrollEvents/87c4388358d54bc228302602070be911939b1689/scrollEvents.min.js
+    //cdn.rawgit.com/ryanpcmcquen/scrollEvents/57315416113628031522d84360563d456aadc104/scrollEvents.min.js
 
 
 If you want to play with `scrollEvents` you can fork this fiddle:

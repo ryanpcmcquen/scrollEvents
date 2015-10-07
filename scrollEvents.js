@@ -56,17 +56,18 @@
     // no listeners so far
     if (!listeners.length) {
       // add single dom event listener that will run all registered listeners
-      throttle(win.addEventListener('scroll',
-        each.bind(null, listeners, function (listener) {
+      win.addEventListener('scroll',
+        throttle(each.bind(null, listeners, function (listener) {
           listener();
-        })
-      ), 100);
+        }), 100)
+      );
     }
 
+    // declared previous outside of listener(),
+    // so it can survive a function call
+    var previous;
     function listener() {
-      // previous value
-      var previous,
-        current = win.pageYOffset > breakPoint ? changedValue : initialValue;
+      var current = win.pageYOffset > breakPoint ? changedValue : initialValue;
       // make sure value was actually changed
       if (previous !== current) {
         // save value for the next call

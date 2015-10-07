@@ -62,11 +62,11 @@
         })
       ), 100);
     }
-    // previous value
-    var previous;
 
     function listener() {
-      var current = win.pageYOffset > breakPoint ? changedValue : initialValue;
+      // previous value
+      var previous,
+        current = win.pageYOffset > breakPoint ? changedValue : initialValue;
       // make sure value was actually changed
       if (previous !== current) {
         // save value for the next call

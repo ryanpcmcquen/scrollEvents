@@ -31,8 +31,6 @@ You could also change the text of an element using `scrollEvents.changeText`, fo
 
 This would cause the change to happen after scrolling down `200` pixels.
 
-`scrollEvents` is still very young so syntax changes may happen (I will try to avoid them if possible), so always check the docs and the code.
-
 =====
 
 I think you get the idea now. `changeClass` is also available, and looks like this:
@@ -41,15 +39,15 @@ I think you get the idea now. `changeClass` is also available, and looks like th
 
 Pull requests and issues are welcome!
 
-`scrollEvents` is available via RawGit CDN (version `0.7.0`).
+`scrollEvents` is available via RawGit CDN (version `0.7.1`).
 
 Development:
 
-    //cdn.rawgit.com/ryanpcmcquen/scrollEvents/57315416113628031522d84360563d456aadc104/scrollEvents.js
+    //cdn.rawgit.com/ryanpcmcquen/scrollEvents/c544d4e06f11f46313491f80c182c8daaccea15f/scrollEvents.js
 
 Minified (under 2kB!):
 
-    //cdn.rawgit.com/ryanpcmcquen/scrollEvents/57315416113628031522d84360563d456aadc104/scrollEvents.min.js
+    //cdn.rawgit.com/ryanpcmcquen/scrollEvents/c544d4e06f11f46313491f80c182c8daaccea15f/scrollEvents.min.js
 
 
 If you want to play with `scrollEvents` you can fork this fiddle:

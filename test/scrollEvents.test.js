@@ -11,7 +11,7 @@ function delay(fn) {
       catch (e) {
         reject(e);
       }
-    }, 100)
+    }, 200)
   });
 }
 
@@ -62,7 +62,7 @@ describe('scrollEvents', function() {
 
       it('should change style property on scroll', function(done) {      
         scrollEvents.changeStyle('#' + id, 'color', 'black', 'white');
-        window.scrollBy(0, 100);
+        window.scrollBy(0, 200);
         delay(function(){
           container.style.color.should.be.equal('white');
         }).then(done, done);
@@ -78,7 +78,7 @@ describe('scrollEvents', function() {
 
       it('should allow to pass custom breakPoint', function(done) {
         scrollEvents.changeStyle('#' + id, 'color', 'blue', 'purple', 1000);
-        window.scrollBy(0, 100);
+        window.scrollBy(0, 200);
         delay(function(){
           container.style.color.should.be.equal('blue');
         }).then(done, done);
@@ -89,7 +89,7 @@ describe('scrollEvents', function() {
         container.style.color = 'black';
         unbinder.should.be.a('function');
         unbinder();
-        window.scrollBy(0, 100);
+        window.scrollBy(0, 200);
         delay(function(){
           container.style.color.should.be.equal('black');
         }).then(done, done);
@@ -135,7 +135,7 @@ describe('scrollEvents', function() {
 
       it('should change text on scroll', function(done) {      
         scrollEvents.changeText('#' + id, 'nonscrolled', 'scrolled');
-        window.scrollBy(0, 100);
+        window.scrollBy(0, 200);
         delay(function(){
           container.textContent.should.equal('scrolled');
         }).then(done, done);
@@ -151,7 +151,7 @@ describe('scrollEvents', function() {
 
       it('should allow to use custom breakPoint', function(done) {
         scrollEvents.changeText('#' + id, 'nonscrolled', 'scrolled', 1000);
-        window.scrollBy(0, 100);
+        window.scrollBy(0, 200);
         delay(function(){
           container.textContent.should.equal('nonscrolled');
         }).then(done, done);
@@ -161,7 +161,7 @@ describe('scrollEvents', function() {
         var unbinder = scrollEvents.changeText('#' + id, 'nonscrolled', 'scrolled');
         unbinder.should.be.a('function');
         unbinder();
-        window.scrollBy(0, 100);
+        window.scrollBy(0, 200);
         delay(function(){
           container.innerText.should.be.equal('nonscrolled');
         }).then(done, done);
@@ -209,7 +209,7 @@ describe('scrollEvents', function() {
 
       it('should change class on scroll', function(done) {      
         scrollEvents.changeClass('#' + id, 'nonscrolled', 'scrolled');
-        window.scrollBy(0, 100);
+        window.scrollBy(0, 200);
         delay(function(){
           container.classList.contains('scrolled').should.be.true;
           container.classList.contains('nonscrolled').should.be.false;
@@ -227,7 +227,7 @@ describe('scrollEvents', function() {
 
       it('should allow to use custom breakPoint', function(done) {
         scrollEvents.changeClass('#' + id, 'nonscrolled', 'scrolled', 1000);
-        window.scrollBy(0, 100);
+        window.scrollBy(0, 200);
         delay(function(){
           container.classList.contains('scrolled').should.be.false;
           container.classList.contains('nonscrolled').should.be.true;
@@ -239,7 +239,7 @@ describe('scrollEvents', function() {
         unbinder.should.be.a('function');
         unbinder();
 
-        window.scrollBy(0, 100);
+        window.scrollBy(0, 200);
         delay(function(){
           container.classList.contains('scrolled').should.be.false;
           container.classList.contains('nonscrolled').should.be.true;

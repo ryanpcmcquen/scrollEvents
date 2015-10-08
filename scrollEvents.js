@@ -72,7 +72,7 @@
       win.addEventListener('scroll',
           throttle(each.bind(null, listeners, function (listener) {
             listener();
-          }), 99)
+          }), 50)
           );
     }
 

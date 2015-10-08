@@ -1,4 +1,4 @@
-// scrollEvents version 0.7.0
+// scrollEvents version 0.7.1
 //
 // Ryan P.C. McQuen | Everett, WA | ryan.q@linux.com
 //
@@ -25,22 +25,35 @@
     // better to throw a new Error than just a string
     throw new Error('You already have a global variable named scrollEvents.');
   }
-  // thanks to @jonathansampson
-  function throttle(callback, limit) {
-    // don't wait initially
-    var wait = false;
-    // return a throttled function
+  // slightly modified/simplified version of underscore.js's throttle (v1.8.3)
+  function throttle(func, wait) {
+    var context, args, result;
+    var timeout = null;
+    var previous = 0;
+    var later = function () {
+      previous = new Date().getTime();
+      timeout = null;
+      result = func.apply(context, args);
+      if (!timeout) context = args = null;
+    };
     return function () {
-      // if not waiting, invoke function
-      if (!wait) {
-        callback.call();
-        // prevent future invocations
-        wait = true;
-        // after a perfiod of time allow function to be invoked again
-        setTimeout(function () {
-          wait = false;
-        }, limit);
+      var now = new Date().getTime();
+      if (!previous) previous = now;
+      var remaining = wait - (now - previous);
+      context = this;
+      args = arguments;
+      if (remaining <= 0 || remaining > wait) {
+        if (timeout) {
+          clearTimeout(timeout);
+          timeout = null;
+        }
+        previous = now;
+        result = func.apply(context, args);
+        if (!timeout) context = args = null;
+      } else if (!timeout) {
+        timeout = setTimeout(later, remaining);
       }
+      return result;
     };
   }
   // select all elements matching selector
@@ -49,18 +62,18 @@
   }
   // alias forEach since we use it so much
   var each = qsa.call.bind([].forEach),
-    // array to hold all event listeners
-    listeners = [];
+  // array to hold all event listeners
+  listeners = [];
   // add another scroll event listener
   function addScrollListener(selectors, fn, initialValue, changedValue, breakPoint) {
     // no listeners so far
     if (!listeners.length) {
       // add single dom event listener that will run all registered listeners
       win.addEventListener('scroll',
-        throttle(each.bind(null, listeners, function (listener) {
-          listener();
-        }), 100)
-      );
+          throttle(each.bind(null, listeners, function (listener) {
+            listener();
+          }), 99)
+          );
     }
 
     // declared previous outside of listener(),
@@ -90,20 +103,29 @@
       }
     };
   }
+  // for later:
+  //var breaker = typeof breakPoint === 'string' ? document.querySelector(breakPoint).offsetTop : breakPoint || this.breakPoint;
+  //
   // export to global
   win.scrollEvents = {
     breakPoint: 10,
+    //
+    // changeClass
+    //
     changeClass: function (selectors, initialValue, changedValue, breakPoint) {
       if (arguments.length < 3) {
         throw new Error('You have not supplied all parameters to scrollEvents.changeClass, this may cause weird or unexpected behavior. The parameters are: selectors, initialValue, changedValue, breakPoint. Note that breakPoint is optional and the default is 10.');
       }
       return addScrollListener(selectors, function changeClass(el, value) {
         var classes = el.classList,
-          initial = initialValue === value;
+        initial = initialValue === value;
         classes.toggle(initialValue, initial);
         classes.toggle(changedValue, !initial);
       }, initialValue, changedValue, breakPoint || this.breakPoint);
     },
+    //
+    // changeStyle
+    //
     changeStyle: function (selectors, property, initialValue, changedValue, breakPoint) {
       if (arguments.length < 4) {
         throw new Error('You have not supplied all parameters to scrollEvents.changeStyle, this may cause weird or unexpected behavior. The parameters are: selectors, property, initialValue, changedValue, breakPoint. Note that breakPoint is optional and the default is 10.');
@@ -112,6 +134,9 @@
         el.style[property] = value;
       }, initialValue, changedValue, breakPoint || this.breakPoint);
     },
+    //
+    // changeText
+    //
     changeText: function (selectors, initialValue, changedValue, breakPoint) {
       if (arguments.length < 3) {
         throw new Error('You have not supplied all parameters to scrollEvents.changeText, this may cause weird or unexpected behavior. The parameters are: selectors, initialValue, changedValue, breakPoint. Note that breakPoint is optional and the default is 10.');

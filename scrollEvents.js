@@ -1,4 +1,4 @@
-// scrollEvents version 0.7.1
+// scrollEvents version 0.7.2
 //
 // Ryan P.C. McQuen | Everett, WA | ryan.q@linux.com
 //
@@ -73,7 +73,7 @@
           throttle(each.bind(null, listeners, function (listener) {
             listener();
           }), 50)
-          );
+      );
     }
 
     // declared previous outside of listener(),

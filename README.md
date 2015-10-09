@@ -37,17 +37,28 @@ I think you get the idea now. `changeClass` is also available, and looks like th
 
     scrollEvents.changeClass('.bar', 'nonscrolled', 'scrolled');
 
+And added in `0.8.0`, we now have `changeHTML`:
+
+    scrollEvents.changeHTML('.bar', 'Scroll down to change css class.', 'We use changeClass. <br> <= That guy uses inline styles, EWWW.');
+
+=====
+
+You can also use a selector as a `breakPoint` argument in `0.8.0`, see a demo here:
+
+https://jsfiddle.net/ryanpcmcquen/c2Lyqzvp/
+
+=====
 Pull requests and issues are welcome!
 
-`scrollEvents` is available via RawGit CDN (version `0.7.2`).
+`scrollEvents` is available via RawGit CDN (version `0.8.0`).
 
 Development:
 
-    //cdn.rawgit.com/ryanpcmcquen/scrollEvents/bf1866acdbe2408be6b90152a409cd1aa4c1d521/scrollEvents.js
+    //cdn.rawgit.com/ryanpcmcquen/scrollEvents/8db27068e7e4fc259856f51228193c7c282f8bef/scrollEvents.js
 
-Minified (under 2kB!):
+Minified (~2kB!):
 
-    //cdn.rawgit.com/ryanpcmcquen/scrollEvents/aa14a255e3f5475e604da5588cdd656e8f5c5399/scrollEvents.min.js
+    //cdn.rawgit.com/ryanpcmcquen/scrollEvents/8db27068e7e4fc259856f51228193c7c282f8bef/scrollEvents.min.js
 
 
 If you want to play with `scrollEvents` you can fork this fiddle:

@@ -1,4 +1,4 @@
-// scrollEvents version 0.8.0
+// scrollEvents version 0.7.2
 //
 // Ryan P.C. McQuen | Everett, WA | ryan.q@linux.com
 //
@@ -27,33 +27,27 @@
   }
   // slightly modified/simplified version of underscore.js's throttle (v1.8.3)
   function throttle(func, wait) {
-    var context, args, result;
     var timeout = null;
     var previous = 0;
     var later = function () {
-      previous = new Date().getTime();
+      previous = Date.now();
       timeout = null;
-      result = func.apply(context, args);
-      if (!timeout) context = args = null;
+      func();
     };
     return function () {
-      var now = new Date().getTime();
+      var now = Date.now();
       if (!previous) previous = now;
       var remaining = wait - (now - previous);
-      context = this;
-      args = arguments;
       if (remaining <= 0 || remaining > wait) {
         if (timeout) {
           clearTimeout(timeout);
           timeout = null;
         }
         previous = now;
-        result = func.apply(context, args);
-        if (!timeout) context = args = null;
+        func();
       } else if (!timeout) {
         timeout = setTimeout(later, remaining);
       }
-      return result;
     };
   }
   // select all elements matching selector
@@ -63,98 +57,220 @@
   // alias forEach since we use it so much
   var each = qsa.call.bind([].forEach),
   // array to hold all event listeners
-  listeners = [];
-  // add another scroll event listener
-  function addScrollListener(selectors, fn, initialValue, changedValue, breakPoint) {
-    // no listeners so far
+  listeners = [],  
+  //run all listeners
+  runner = throttle(function() {
+    each(listeners, function(listener) {
+      listener();
+    });
+  }, 50);
+
+  //add scroll listener
+  function addEventListener(fn) {
     if (!listeners.length) {
       // add single dom event listener that will run all registered listeners
-      win.addEventListener('scroll',
-          // 50ms is a pretty good throttle default,
-          // still feels fast ... but won't completely spam out scroll events
-          throttle(each.bind(null, listeners, function (listener) {
-            listener();
-          }), 50)
-      );
+      win.addEventListener('scroll', runner);
     }
 
-    // declared previous outside of listener(),
-    // so it can survive a function call
-    var previous;
-    function listener() {
-      var current = win.pageYOffset > breakPoint ? changedValue : initialValue;
-      // make sure value was actually changed
-      if (previous !== current) {
-        // save value for the next call
-        previous = current;
-        // apply fn to each selected element with the current value
-        each(qsa(selectors), function apply(el) {
-          fn(el, current);
-        });
-      }
-    }
-    // register a listener
-    listeners.push(listener);
-    // remove scroll listener when called
-    return function removeScrollListener() {
-      var index = listeners.indexOf(listener);
-      // if the listener is still there,
-      // remove it
-      if (index > -1) {
+    listeners.push(fn);
+
+    return function removeEventListener() {
+      //find current fn index
+      var index = listeners.indexOf(fn);
+      //if it is still there,
+      //remove
+      if(index > -1) {
+
         listeners.splice(index, 1);
+      }
+
+      //if no more listeners left,
+      //unbind
+      if(!listeners.length) {
+        win.removeEventListener('scroll', runner);
       }
     };
   }
-  // export to global
-  win.scrollEvents = {
-    breakPoint: 10,
-    //
-    // changeClass
-    //
-    changeClass: function (selectors, initialValue, changedValue, breakPoint) {
-      if (arguments.length < 3) {
-        throw new Error('You have not supplied all parameters to scrollEvents.changeClass, this may cause weird or unexpected behavior. The parameters are: selectors, initialValue, changedValue, breakPoint. Note that breakPoint is optional and the default is 10.');
-      }
-      return addScrollListener(selectors, function changeClass(el, value) {
-        var classes = el.classList,
-        initial = initialValue === value;
-        classes.toggle(initialValue, initial);
-        classes.toggle(changedValue, !initial);
-      }, initialValue, changedValue, typeof breakPoint === 'string' ? document.querySelector(breakPoint).offsetTop : breakPoint || this.breakPoint);
 
-    },
-    //
-    // changeHTML
-    //
-    changeHTML: function (selectors, initialValue, changedValue, breakPoint) {
-      if (arguments.length < 3) {
-        throw new Error('You have not supplied all parameters to scrollEvents.changeHTML, this may cause weird or unexpected behavior. The parameters are: selectors, initialValue, changedValue, breakPoint. Note that breakPoint is optional and the default is 10.');
+  //All scrollEvents public methods
+  //both static and prototypes.
+  var methods = {
+    /**
+     * Changes element.style.property value.
+     */
+    changeStyle: function(property, initial, changed) {
+      if(arguments.length < 3) {
+        throw new Error('You have not supplied all parameters to scrollEvents.changeStyle.');
       }
-      return addScrollListener(selectors, function changeHTMLContent(el, value) {
-        el.innerHTML = value;
-      }, initialValue, changedValue, typeof breakPoint === 'string' ? document.querySelector(breakPoint).offsetTop : breakPoint || this.breakPoint);
+
+      return function(el, below) {
+        el.style[property] = below ? changed : initial;
+      };
     },
-    //
-    // changeStyle
-    //
-    changeStyle: function (selectors, property, initialValue, changedValue, breakPoint) {
-      if (arguments.length < 4) {
-        throw new Error('You have not supplied all parameters to scrollEvents.changeStyle, this may cause weird or unexpected behavior. The parameters are: selectors, property, initialValue, changedValue, breakPoint. Note that breakPoint is optional and the default is 10.');
+
+    /**
+     * Changes element.textContent.
+     */
+    changeText: function(initial, changed) {
+      if(arguments.length < 2) {
+        throw new Error('You have not supplied all parameters to scrollEvents.changeText.');
       }
-      return addScrollListener(selectors, function changeStyleProperty(el, value) {
-        el.style[property] = value;
-      }, initialValue, changedValue, typeof breakPoint === 'string' ? document.querySelector(breakPoint).offsetTop : breakPoint || this.breakPoint);
+
+      return function(el, below) {
+        el.textContent = below ? changed : initial;
+      };
     },
-    //
-    // changeText
-    //
-    changeText: function (selectors, initialValue, changedValue, breakPoint) {
-      if (arguments.length < 3) {
-        throw new Error('You have not supplied all parameters to scrollEvents.changeText, this may cause weird or unexpected behavior. The parameters are: selectors, initialValue, changedValue, breakPoint. Note that breakPoint is optional and the default is 10.');
+
+    /**
+     * Changes element class.
+     */
+    changeClass: function(initial, changed) {
+      if(arguments.length < 2) {
+        throw new Error('You have not supplied all parameters to scrollEvents.changeClass.');
       }
-      return addScrollListener(selectors, function changeTextContent(el, value) {
-        el.textContent = value;
-      }, initialValue, changedValue, typeof breakPoint === 'string' ? document.querySelector(breakPoint).offsetTop : breakPoint || this.breakPoint);
+
+      return function(el, below) {
+        var classes = el.classList;
+        classes.toggle(initial, !below);
+        classes.toggle(changed, below);
+      };
+    },
+
+    /**
+     * Changes element html content.
+     */
+    changeHTML: function(initial, changed) {
+      if(arguments.length < 2) {
+        throw new Error('You have not supplied all parameters to scrollEvents.changeHTML.');
+      }
+
+      return function(el, below) {
+        el.innerHTML = below ? changed : initial;
+      };
     }
-  };
+  },
+  //all method names
+  methodNames = Object.keys(methods);
+
+  function scrollSpy(selector) {
+    var spy = {}, 
+      //all registered callbacks changers.
+      callbacks = [];
+
+    if(!selector) { //spy requires selector.
+      throw new Error('Selector is required to apply scroll events to.');
+    }
+
+    //enhance spy object with public methods.
+    methodNames.forEach(function(name) {
+      //original method
+      var method = methods[name];
+
+      //make function that checks if we cross the breakPoint
+      function makeBreakPointChecker(args) {
+        var breakPoint = args[method.length] || scrollSpy.breakPoint;
+
+        if(typeof breakPoint === 'string') { //breakPoint is a selector
+          breakPoint = doc.querySelector(breakPoint).offsetTop;
+        }
+
+        return function() {
+          return win.pageYOffset > breakPoint;
+        };
+      }
+
+      spy[name] = function() {
+        //previous value
+        var previous,
+          args = arguments,
+          //make isBelow checker
+          isBelow = makeBreakPointChecker(args),
+          //make el changer
+          callback = method.apply(spy, args);
+
+        //add to callback list
+        callbacks.push(function(elements) {
+          var current = isBelow(); //get current value
+
+          if(current !== previous) { //check if it was actually changed
+            previous = current; //save for the next call
+
+            if(!elements) { //check if another callback has already made dom query
+              elements = qsa(selector); //lets query the DOM
+            }
+
+            each(elements, function(el) { //apply changer to each element
+              callback(el, current);
+            });
+          }
+
+          //return elements for the next callback to avoid multiple queries
+          return elements;
+        });
+
+        return spy;
+      };
+    });
+
+    //run all callbacks passing elements around
+    function listener() {
+      var elements;
+
+      each(callbacks, function(cb) {
+        elements = cb(elements);
+      });
+    }
+
+    //does nothing but returns current spy
+    function noop() {
+      return spy;
+    }
+
+    //create on method that binds scroll listener for current spy
+    spy.on = function on() {
+      //add DOM listener
+      var unbinder = addEventListener(listener);
+
+      //avoid multiple inits
+      spy.on = noop;
+
+      //make turn off method
+      spy.off = function off() {
+        unbinder();//unbind
+
+        //noop to avoid multiple unbinds.
+        spy.off = noop;
+
+        //restore on method
+        spy.on = on;
+
+        return spy;
+      };
+
+      return spy;
+    };
+
+    //init
+    spy.on();
+
+    return spy;
+  }
+
+  //default breakPoint
+  scrollSpy.breakPoint = 10;
+
+  //enhance scrollSpy with static methods
+  methodNames.forEach(function(name) {
+    scrollSpy[name] = function(selector/*, rest...*/) {
+      var rest = [].slice.call(arguments, 1),
+        //create a spy
+        spy = scrollSpy(selector);
+
+      //and invoke corresponding method on it
+      return spy[name].apply(spy, rest);
+    };
+  });
+
+  //export 
+  win.scrollEvents = scrollSpy;
 })(window, document);

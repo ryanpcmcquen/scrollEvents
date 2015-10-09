@@ -1,5 +1,5 @@
 # scrollEvents
-A pure JavaScript library to do stuff on scroll events.
+A pure JavaScript library to do stuff on scroll events. :zap:
 
 `scrollEvents` gets you up and running in no time with scroll events.
 
@@ -7,7 +7,7 @@ A pure JavaScript library to do stuff on scroll events.
 
 =====
 
-### Method examples
+### API
 
 Here is an example of something you could do:
 
@@ -51,12 +51,15 @@ So just feed your selector as an argument to `scrollEvents` without any methods,
 
 =====
 
-You can also use a selector as a `breakPoint` argument in `0.8.0`+, see a demo here:
+You can also use a selector as a `breakPoint` argument in `0.8.0`+:
 
-https://jsfiddle.net/ryanpcmcquen/c2Lyqzvp/
+    scrollEvents.changeStyle(".foo", "height", "200px", "400px", ".bar");
+
+Demo: https://jsfiddle.net/ryanpcmcquen/c2Lyqzvp/
 
 =====
-Pull requests and issues are welcome!
+
+### How do I use it?
 
 `scrollEvents` is available via RawGit CDN (version `0.9.0`).
 
@@ -72,5 +75,7 @@ Minified (~2kB!):
 If you want to play with `scrollEvents` you can fork this fiddle:
 
 https://jsfiddle.net/ryanpcmcquen/yc7oowrt/
+
+Pull requests and issues are *always* welcome.
 
 Enjoy!

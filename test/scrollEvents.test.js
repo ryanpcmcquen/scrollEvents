@@ -1,12 +1,19 @@
 chai.should();
 mocha.ui('bdd');
 
+function scrollTo(to) {
+  window.scroll(0, to);
+  return delay();
+}
+
 function delay(fn) {
   return new Promise(function(resolve, reject){
     setTimeout(function() {
       try {
-        fn();
-        resolve();
+        if(typeof fn === 'function') {
+          fn = fn();
+        }
+        resolve(fn);
       }
       catch (e) {
         reject(e);
@@ -16,12 +23,94 @@ function delay(fn) {
 }
 
 describe('scrollEvents', function() {
-  it('should be an object', function() {
-    scrollEvents.should.be.an('object');
+  it('should be ok', function() {
+    scrollEvents.should.be.ok;
   });
 
   it('should expose default breakPoint', function() {
     scrollEvents.should.have.property('breakPoint', 10);
+  });
+
+  describe('chaining', function() {
+    it('should be a function', function() {
+      scrollEvents.should.be.a('function');
+    });
+
+    it('should throw when called w/o selector', function() {
+      (function() {
+        scrollEvents()
+      }).should.throw();
+    });
+
+    it('should create a spy', function() {
+      scrollEvents('.foo').should.be.ok;
+    });
+
+    describe('scroll spy', function() {
+      var spy = null,
+        container = null;
+
+      before(function() {
+        spy = scrollEvents('#scroll-spy-test');
+      });
+
+      before(function() {
+        container = document.createElement('DIV');
+        container.style.height = '3000px';
+        container.setAttribute('id', 'scroll-spy-test');
+        container.classList.add('unscrolled');
+        container.style.color = 'green';
+        container.textContent = 'unscrolled';
+        document.body.appendChild(container);
+      });
+
+      beforeEach(function(done) {
+        scrollTo(0).then(done, done);
+      });
+
+      after(function() {
+        container.parentNode.removeChild(container);
+      });
+
+      it('should allow to chain changeText', function(done) {
+        spy.should.have.property('changeText')
+          .that.is.a('function');
+
+        var text = spy.changeText('unscrolled', 'scrolled');
+
+        text.should.be.equal(spy);
+
+        scrollTo(100).then(function() {
+          container.textContent.should.be.equal('scrolled');
+        }).then(done, done);
+      });
+
+      it('should allow to chain changeClass', function(done) {
+        spy.should.have.property('changeClass')
+          .that.is.a('function');
+
+        var clz = spy.changeClass('unscrolled', 'scrolled');
+
+        clz.should.be.equal(spy);
+
+        scrollTo(100).then(function() {
+          container.classList.contains('scrolled').should.be.true;
+        }).then(done, done);
+      });
+
+      it('should allow to chain changeStyle', function(done) {
+        spy.should.have.property('changeStyle')
+          .that.is.a('function');
+
+        var style = spy.changeStyle('color', 'green', 'red');
+
+        style.should.be.equal(spy);
+
+        scrollTo(100).then(function() {
+          container.style.color.should.be.equal('red');
+        }).then(done, done);
+      });
+    });
   });
 
   describe('#changeStyle', function() {
@@ -56,8 +145,7 @@ describe('scrollEvents', function() {
 
       //scroll top
       beforeEach(function(done) {
-        window.scroll(0, 0);
-        delay(function(){}).then(done, done);
+        scrollTo(0).then(done, done);
       });
 
       it('should change style property on scroll', function(done) {      
@@ -84,11 +172,13 @@ describe('scrollEvents', function() {
         }).then(done, done);
       });
 
-      it('should return unbinder', function(done) {
-        var unbinder = scrollEvents.changeStyle('#' + id, 'color', 'white', 'yellow');
+      it('should return a spy', function(done) {
+        var spy = scrollEvents.changeStyle('#' + id, 'color', 'white', 'yellow');
         container.style.color = 'black';
-        unbinder.should.be.a('function');
-        unbinder();
+        spy.should.be.ok
+          .and.have.property('off')
+          .that.is.a('function');
+        spy.off();
         window.scrollBy(0, 200);
         delay(function(){
           container.style.color.should.be.equal('black');
@@ -114,12 +204,13 @@ describe('scrollEvents', function() {
       //create container
       beforeEach(function() {
         container = document.createElement('DIV');
-        container.innerText = 'nonscrolled';
         id = 'change-text-test-container' + (i++);
         container.setAttribute('id', id);
         container.style.height = '3000px';
 
         document.body.appendChild(container);    
+        
+        container.textContent = 'nonscrolled';
       });
 
       //clear container
@@ -129,8 +220,7 @@ describe('scrollEvents', function() {
 
       //scroll top
       beforeEach(function(done) {
-        window.scroll(0, 0);
-        delay(function(){}).then(done, done);
+        scrollTo(0).then(done, done);
       });
 
       it('should change text on scroll', function(done) {      
@@ -157,13 +247,14 @@ describe('scrollEvents', function() {
         }).then(done, done);
       });
 
-      it('should return unbinder', function(done) {
-        var unbinder = scrollEvents.changeText('#' + id, 'nonscrolled', 'scrolled');
-        unbinder.should.be.a('function');
-        unbinder();
+      it('should return spy', function(done) {
+        var spy = scrollEvents.changeText('#' + id, 'nonscrolled', 'scrolled');
+        spy.should.have.property('off')
+          .that.is.a('function');
+        spy.off();
         window.scrollBy(0, 200);
         delay(function(){
-          container.innerText.should.be.equal('nonscrolled');
+          container.textContent.should.be.equal('nonscrolled');
         }).then(done, done);
       });
 
@@ -203,8 +294,7 @@ describe('scrollEvents', function() {
 
       //scroll top
       beforeEach(function(done) {
-        window.scroll(0, 0);
-        delay(function(){}).then(done, done);
+        scrollTo(0).then(done, done);
       });
 
       it('should change class on scroll', function(done) {      
@@ -234,10 +324,12 @@ describe('scrollEvents', function() {
         }).then(done, done);
       });
 
-      it('should return unbinder', function(done) {
-        var unbinder = scrollEvents.changeClass('#' + id, 'nonscrolled', 'scrolled');
-        unbinder.should.be.a('function');
-        unbinder();
+      it('should return a spy', function(done) {
+        var spy = scrollEvents.changeClass('#' + id, 'nonscrolled', 'scrolled');
+        spy.should.have.property('off')
+          .that.is.a('function');
+
+        spy.off();
 
         window.scrollBy(0, 200);
         delay(function(){

@@ -1,4 +1,4 @@
-# scrollEvents
+# scrollEvents :scroll:
 A pure JavaScript library to do stuff on scroll events. :zap:
 
 `scrollEvents` gets you up and running in no time with scroll events.

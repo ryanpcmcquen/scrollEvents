@@ -7,6 +7,8 @@ A pure JavaScript library to do stuff on scroll events.
 
 =====
 
+### Method examples
+
 Here is an example of something you could do:
 
     scrollEvents.changeStyle(".foo", "height", "400px", "800px");
@@ -41,24 +43,30 @@ And added in `0.8.0`, we now have `changeHTML`:
 
     scrollEvents.changeHTML('.bar', 'Scroll down to change css class.', 'We use changeClass. <br> <= That guy uses inline styles, EWWW.');
 
+Added in `0.9.0`, we now allow method chaining:
+
+    scrollEvents(".example").changeText("Back at the top!", "You have scrolled!").changeClass("example--not_scrolled", "example--scrolled");
+
+So just feed your selector as an argument to `scrollEvents` without any methods, and then leave the `selector` argument out of all the methods. Thanks to @Tarabyte for all the help on this!
+
 =====
 
-You can also use a selector as a `breakPoint` argument in `0.8.0`, see a demo here:
+You can also use a selector as a `breakPoint` argument in `0.8.0`+, see a demo here:
 
 https://jsfiddle.net/ryanpcmcquen/c2Lyqzvp/
 
 =====
 Pull requests and issues are welcome!
 
-`scrollEvents` is available via RawGit CDN (version `0.8.0`).
+`scrollEvents` is available via RawGit CDN (version `0.9.0`).
 
 Development:
 
-    //cdn.rawgit.com/ryanpcmcquen/scrollEvents/8db27068e7e4fc259856f51228193c7c282f8bef/scrollEvents.js
+    //cdn.rawgit.com/ryanpcmcquen/scrollEvents/611a6ac64d57e70fd4f80c8e8ea1577aef81713e/scrollEvents.js
 
 Minified (~2kB!):
 
-    //cdn.rawgit.com/ryanpcmcquen/scrollEvents/8db27068e7e4fc259856f51228193c7c282f8bef/scrollEvents.min.js
+    //cdn.rawgit.com/ryanpcmcquen/scrollEvents/ddfe223fac3999a9ff809e377315fe86c442b671/scrollEvents.min.js
 
 
 If you want to play with `scrollEvents` you can fork this fiddle:

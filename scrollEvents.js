@@ -70,6 +70,8 @@
     if (!listeners.length) {
       // add single dom event listener that will run all registered listeners
       win.addEventListener('scroll',
+          // 50ms is a pretty good throttle default,
+          // still feels fast ... but won't completely spam out scroll events
           throttle(each.bind(null, listeners, function (listener) {
             listener();
           }), 50)
@@ -103,9 +105,6 @@
       }
     };
   }
-  // for later:
-  //var breaker = typeof breakPoint === 'string' ? document.querySelector(breakPoint).offsetTop : breakPoint || this.breakPoint;
-  //
   // export to global
   win.scrollEvents = {
     breakPoint: 10,
@@ -123,6 +122,17 @@
         classes.toggle(changedValue, !initial);
       }, initialValue, changedValue, typeof breakPoint === 'string' ? document.querySelector(breakPoint).offsetTop : breakPoint || this.breakPoint);
 
+    },
+    //
+    // changeHTML
+    //
+    changeHTML: function (selectors, initialValue, changedValue, breakPoint) {
+      if (arguments.length < 3) {
+        throw new Error('You have not supplied all parameters to scrollEvents.changeHTML, this may cause weird or unexpected behavior. The parameters are: selectors, initialValue, changedValue, breakPoint. Note that breakPoint is optional and the default is 10.');
+      }
+      return addScrollListener(selectors, function changeHTMLContent(el, value) {
+        el.innerHTML = value;
+      }, initialValue, changedValue, typeof breakPoint === 'string' ? document.querySelector(breakPoint).offsetTop : breakPoint || this.breakPoint);
     },
     //
     // changeStyle

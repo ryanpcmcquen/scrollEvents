@@ -1,4 +1,4 @@
-// scrollEvents version 0.7.2
+// scrollEvents version 0.8.0
 //
 // Ryan P.C. McQuen | Everett, WA | ryan.q@linux.com
 //

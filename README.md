@@ -7,7 +7,7 @@ A pure JavaScript library to do stuff on scroll events. :zap:
 
 =====
 
-### API
+### API :secret:
 
 Here is an example of something you could do:
 
@@ -59,7 +59,7 @@ Demo: https://jsfiddle.net/ryanpcmcquen/c2Lyqzvp/
 
 =====
 
-### How do I use it?
+### How do I use it? :shipit:
 
 `scrollEvents` is available via RawGit CDN (version `0.9.0`).
 

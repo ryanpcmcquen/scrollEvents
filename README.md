@@ -39,23 +39,25 @@ I think you get the idea now. `changeClass` is also available, and looks like th
 
     scrollEvents.changeClass('.bar', 'nonscrolled', 'scrolled');
 
-And added in `0.8.0`, we now have `changeHTML`:
+=====
 
-    scrollEvents.changeHTML('.bar', 'Scroll down to change css class.', 'We use changeClass. <br> <= That guy uses inline styles, EWWW.');
+Added in `0.8.0`, we now have `changeHTML`:
+
+    scrollEvents.changeHTML('.bar', 'Scroll down to change class.', 'We changed class. <br> <= That guy uses inline styles, EWWW.');
+
+And the ability to use a selector as a `breakPoint` argument:
+
+    scrollEvents.changeStyle(".foo", "height", "200px", "400px", ".bar");
+
+Demo: https://jsfiddle.net/ryanpcmcquen/c2Lyqzvp/
+
+=====
 
 Added in `0.9.0`, we now allow method chaining:
 
     scrollEvents(".example").changeText("Back at the top!", "You have scrolled!").changeClass("example--not_scrolled", "example--scrolled");
 
 So just feed your selector as an argument to `scrollEvents` without any methods, and then leave the `selector` argument out of all the methods. Thanks to @Tarabyte for all the help on this!
-
-=====
-
-You can also use a selector as a `breakPoint` argument in `0.8.0`+:
-
-    scrollEvents.changeStyle(".foo", "height", "200px", "400px", ".bar");
-
-Demo: https://jsfiddle.net/ryanpcmcquen/c2Lyqzvp/
 
 =====
 

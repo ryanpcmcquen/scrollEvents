@@ -178,9 +178,11 @@
       function makeBreakPointChecker(args) {
         var breakPoint = args[method.length] || scrollSpy.breakPoint;
 
+        var selectorBreakpoint = false;
         // breakPoint is a selector
         if (typeof breakPoint === 'string') {
           breakPoint = doc.querySelector(breakPoint).offsetTop;
+          selectorBreakpoint = true;
         }
 
         return function () {
@@ -188,7 +190,12 @@
           // this way when selectors are used, the change happens when those
           // selectors enter the viewport, not when they hit the top of the page
           // thanks to @Tarabyte and @RamonGebben for feedback
-          var scrollPoint = (scrollEvents.useViewportHeight) ? (win.pageYOffset + Math.max(document.documentElement.clientHeight, window.innerHeight || 0)) : win.pageYOffset;
+          var scrollPoint;
+          if (selectorBreakpoint) {
+            scrollPoint = (scrollEvents.useViewportHeight) ? (win.pageYOffset + Math.max(document.documentElement.clientHeight, window.innerHeight || 0)) : win.pageYOffset;
+          } else {
+            scrollPoint = win.pageYOffset;
+          }
           return scrollPoint > breakPoint;
         };
       }

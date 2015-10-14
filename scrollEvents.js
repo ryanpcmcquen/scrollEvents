@@ -184,6 +184,7 @@
       if(typeof breakPoint !==  'number') {
         throw new Error('breakPoint should be a number for scrollEvents.whenDistance.');
       }
+
       return function() {
         return breakPoint;
       };
@@ -205,9 +206,10 @@
           return selector.offsetTop;
         };
       }
+      
       //enters the viewport
       return function() {
-        //all modern browser support window.innerHeright
+        //all modern browsers support window.innerHeright
         return selector.offsetTop - win.innerHeight;
       };
     },

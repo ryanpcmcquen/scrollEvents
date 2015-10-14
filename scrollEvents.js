@@ -27,13 +27,13 @@
   }
   // slightly modified/simplified version of underscore.js's throttle (v1.8.3)
   function throttle(func, wait) {
-    var timeout = null;
-    var previous = 0;
-    var later = function () {
-      previous = Date.now();
-      timeout = null;
-      func();
-    };
+    var timeout = null,
+      previous = 0,
+      later = function () {
+        previous = Date.now();
+        timeout = null;
+        func();
+      };
     return function () {
       var now = Date.now();
       if (!previous) previous = now;
@@ -95,40 +95,6 @@
   // all scrollEvents public methods
   // both static and prototypes
   var methods = {
-      // add the option to use the viewport height,
-      // so that events can trigger when objects first
-      // enter the viewport, rather than when they
-      // hit the top of the page
-      //
-      // default is true until i am convinced that false
-      // is more intuitive
-      useViewportHeight: true,
-      /**
-       * Changes element.style.property value.
-       */
-      changeStyle: function (property, initial, changed) {
-        if (arguments.length < 3) {
-          throw new Error('You have not supplied all parameters to scrollEvents.changeStyle.');
-        }
-
-        return function (el, below) {
-          el.style[property] = below ? changed : initial;
-        };
-      },
-
-      /**
-       * Changes element.textContent.
-       */
-      changeText: function (initial, changed) {
-        if (arguments.length < 2) {
-          throw new Error('You have not supplied all parameters to scrollEvents.changeText.');
-        }
-
-        return function (el, below) {
-          el.textContent = below ? changed : initial;
-        };
-      },
-
       /**
        * Changes element class.
        */
@@ -155,7 +121,34 @@
         return function (el, below) {
           el.innerHTML = below ? changed : initial;
         };
+      },
+
+      /**
+       * Changes element.style.property value.
+       */
+      changeStyle: function (property, initial, changed) {
+        if (arguments.length < 3) {
+          throw new Error('You have not supplied all parameters to scrollEvents.changeStyle.');
+        }
+
+        return function (el, below) {
+          el.style[property] = below ? changed : initial;
+        };
+      },
+
+      /**
+       * Changes element.textContent.
+       */
+      changeText: function (initial, changed) {
+        if (arguments.length < 2) {
+          throw new Error('You have not supplied all parameters to scrollEvents.changeText.');
+        }
+
+        return function (el, below) {
+          el.textContent = below ? changed : initial;
+        };
       }
+
     },
     // all method names
     methodNames = Object.keys(methods);
@@ -178,11 +171,11 @@
       function makeBreakPointChecker(args) {
         var breakPoint = args[method.length] || scrollSpy.breakPoint;
 
-        var selectorBreakpoint = false;
+        var selectorBreakPointIsUsed = false;
         // breakPoint is a selector
         if (typeof breakPoint === 'string') {
           breakPoint = doc.querySelector(breakPoint).offsetTop;
-          selectorBreakpoint = true;
+          selectorBreakPointIsUsed = true;
         }
 
         return function () {
@@ -191,8 +184,8 @@
           // selectors enter the viewport, not when they hit the top of the page
           // thanks to @Tarabyte and @RamonGebben for feedback
           var scrollPoint;
-          if (selectorBreakpoint) {
-            scrollPoint = (scrollEvents.useViewportHeight) ? (win.pageYOffset + Math.max(document.documentElement.clientHeight, window.innerHeight || 0)) : win.pageYOffset;
+          if (selectorBreakPointIsUsed) {
+            scrollPoint = (scrollEvents.useViewportHeight) ? (win.pageYOffset + window.innerHeight) : win.pageYOffset;
           } else {
             scrollPoint = win.pageYOffset;
           }
@@ -285,6 +278,16 @@
 
   // default breakPoint
   scrollSpy.breakPoint = 10;
+
+  // add the option to use the viewport height,
+  // so that events can trigger when objects first
+  // enter the viewport, rather than when they
+  // hit the top of the page, ONLY activates
+  // when breakPoint is a selector
+  //
+  // default is true until i am convinced that false
+  // is more intuitive
+  scrollSpy.useViewportHeight = true;
 
   // enhance scrollSpy with static methods
   methodNames.forEach(function (name) {

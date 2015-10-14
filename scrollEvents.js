@@ -55,7 +55,7 @@
     return doc.querySelectorAll(selector);
   }
 
-  //Function.prototype.call shortcut
+  // Function.prototype.call shortcut
   var call = qsa.call,
     // alias forEach since we use it so much
     each = call.bind([].forEach),

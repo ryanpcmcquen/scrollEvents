@@ -153,8 +153,8 @@
           el.textContent = below ? changed : initial;
         };
       }
-
     },
+
     // all method names
     methodNames = Object.keys(methods),
     // when* methods (instance only)

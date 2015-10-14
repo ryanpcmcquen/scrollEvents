@@ -54,13 +54,18 @@
   function qsa(selector) {
     return doc.querySelectorAll(selector);
   }
-  // alias forEach since we use it so much
-  var each = qsa.call.bind([].forEach),
+
+  // Function.prototype.call shortcut
+  var call = qsa.call,
+    // alias forEach since we use it so much
+    each = call.bind([].forEach),
+    // slice shortcut
+    slice = call.bind([].slice),
     // array to hold all event listeners
-    listeners = [],
+    listeners = [],  
     // run all listeners
-    runner = throttle(function () {
-      each(listeners, function (listener) {
+    runner = throttle(function() {
+      each(listeners, function(listener) {
         listener();
       });
     }, 50);
@@ -148,17 +153,91 @@
           el.textContent = below ? changed : initial;
         };
       }
-
     },
+
     // all method names
-    methodNames = Object.keys(methods);
+    methodNames = Object.keys(methods),
+    // when* methods (instance only)
+    whenMethods = {
+      /**
+       * Generic method
+       */
+      when: function(breakPoint) {
+        var type;
+        if(!breakPoint) {
+          throw new Error('breakPoint is required for scrollEvents.when.');
+        }
+        type = typeof breakPoint;
+
+        switch (type) {
+          case 'function': return breakPoint;
+          case 'string': return whenMethods.whenElement.apply(whenMethods, arguments);
+          case 'number': return whenMethods.whenDistance.apply(whenMethods, arguments);
+          default: throw new Error('Unknown breakPoint type "' + type + '" for scrollEvents.when.');
+        }
+      },
+
+      /**
+       * When scroll distance reaches the breakpoint
+       */
+      whenDistance: function(breakPoint) {
+        if(typeof breakPoint !==  'number') {
+          throw new Error('breakPoint should be a number for scrollEvents.whenDistance.');
+        }
+        return function() {
+          return breakPoint;
+        };
+      },
+
+      /**
+       * When element selector enters the view port or hits top.
+       */
+      whenElement: function(selector, hitsTop) {
+        if(typeof selector !== 'string') {
+          throw new Error('breakPoint should be a string for scrollEvents.whenElement.');
+        }
+
+        selector = doc.querySelector(selector);
+
+        //we want user be expicit whether she/he wants to trigger event when element hits top
+        if(hitsTop === true) {
+          return function() {
+            return selector.offsetTop;
+          };
+        }
+        //enters the viewport
+        return function() {
+          //all modern browser support window.innerHeright
+          return selector.offsetTop - win.innerHeight;
+        };
+      },
+
+      /**
+       * When element enters the viewport.
+       */
+      whenElementEnters: function(selector) {
+        return whenMethods.whenElement(selector, false);
+      },
+
+      /**
+       * When element hits the viewport top.
+       */
+      whenElementHitsTop: function(selector) {
+        return whenMethods.whenElement(selector, true);
+      }
+    },
+    // all when* method names
+    whenMethodNames = Object.keys(whenMethods);
 
   function scrollSpy(selector) {
-    var spy = {},
+    var spy = {}, 
       // all registered callbacks changers.
-      callbacks = [];
-    // spy requires selector
-    if (!selector) {
+      callbacks = [],
+      // default breakpoint getter
+      defaultBreakPoint;
+
+    // spy requires selector.
+    if(!selector) { 
       throw new Error('Selector is required to apply scroll events to.');
     }
 
@@ -169,27 +248,13 @@
 
       // make function that checks if we cross the breakPoint
       function makeBreakPointChecker(args) {
-        var breakPoint = args[method.length] || scrollSpy.breakPoint;
+        var params = slice(args, method.length), 
+          breakPoint = params.length;
 
-        var selectorBreakPointIsUsed = false;
-        // breakPoint is a selector
-        if (typeof breakPoint === 'string') {
-          breakPoint = doc.querySelector(breakPoint).offsetTop;
-          selectorBreakPointIsUsed = true;
-        }
+        breakPoint = breakPoint ? whenMethods.when.apply(whenMethods, params) : defaultBreakPoint;
 
-        return function () {
-          // use window.pageYOffset plus the viewport height as a default (new in v1.0.0)
-          // this way when selectors are used, the change happens when those
-          // selectors enter the viewport, not when they hit the top of the page
-          // thanks to @Tarabyte and @RamonGebben for feedback
-          var scrollPoint;
-          if (selectorBreakPointIsUsed) {
-            scrollPoint = (scrollEvents.useViewportHeight) ? (win.pageYOffset + window.innerHeight) : win.pageYOffset;
-          } else {
-            scrollPoint = win.pageYOffset;
-          }
-          return scrollPoint > breakPoint;
+        return function() {
+          return win.pageYOffset > breakPoint();
         };
       }
 
@@ -227,6 +292,18 @@
           return elements;
         });
 
+        return spy;
+      };
+    });
+
+    // enhance spy object with when* methods
+    whenMethodNames.forEach(function(name) {
+      var method = whenMethods[name];
+
+      method = method.apply.bind(method, methodNames);
+
+      spy[name] = function() {
+        defaultBreakPoint = method(arguments);
         return spy;
       };
     });
@@ -272,6 +349,8 @@
 
     // init
     spy.on();
+    // init default breakpoint getter
+    spy.when(scrollSpy.breakPoint, !scrollSpy.useViewportHeight);
 
     return spy;
   }
@@ -290,9 +369,9 @@
   scrollSpy.useViewportHeight = true;
 
   // enhance scrollSpy with static methods
-  methodNames.forEach(function (name) {
-    scrollSpy[name] = function (selector /*, rest...*/ ) {
-      var rest = [].slice.call(arguments, 1),
+  methodNames.forEach(function(name) {
+    scrollSpy[name] = function(selector/*, rest...*/) {
+      var rest = slice(arguments, 1),
         // create a spy
         spy = scrollSpy(selector);
 

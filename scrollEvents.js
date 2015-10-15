@@ -207,7 +207,7 @@
         }
         // enters the viewport
         return function() {
-          // all modern browser support window.innerHeright
+          // all modern browsers support window.innerHeright
           return selector.offsetTop - win.innerHeight;
         };
       },

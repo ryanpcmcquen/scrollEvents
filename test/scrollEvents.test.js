@@ -22,6 +22,35 @@ function delay(fn) {
   });
 }
 
+function div(id, clz, css) {
+  var el = document.createElement('DIV');
+
+  if(id) {
+    el.setAttribute('id', id);
+  }
+  if(clz) {
+    el.classList.add(clz);
+  }
+
+  if(css) {
+    Object.keys(css).forEach(function(prop) {
+      el.style[prop] = css[prop];
+    });
+  }
+
+  document.body.appendChild(el);
+
+  return el;
+}
+
+function checkClass(container) {
+  return function(scrolled) {
+    var classes = container.classList;
+    classes.contains(scrolled ? 'scrolled' : 'unscrolled').should.be.true;
+    classes.contains(scrolled ? 'unscrolled' : 'scrolled').should.be.false;    
+  };
+}
+
 describe('scrollEvents', function() {
   it('should be ok', function() {
     scrollEvents.should.be.ok;
@@ -29,6 +58,10 @@ describe('scrollEvents', function() {
 
   it('should expose default breakPoint', function() {
     scrollEvents.should.have.property('breakPoint', 10);
+  });
+
+  it('should expose default useViewportHeight', function() {
+    scrollEvents.should.have.property('useViewportHeight', true);
   });
 
   describe('chaining', function() {
@@ -109,6 +142,278 @@ describe('scrollEvents', function() {
         scrollTo(100).then(function() {
           container.style.color.should.be.equal('red');
         }).then(done, done);
+      });
+    });
+  });
+
+  describe('when-api', function() {
+    describe('#when', function() {
+      it('should be a function', function() {
+        scrollEvents('.foo').should.have.property('when')
+          .that.is.a('function');
+      });
+
+      it('should throw when called w/o argument', function() {
+        (function() {
+          scrollEvents('.foo').when();
+        }).should.throw();
+      });
+
+      it('should return a spy', function() {
+        var spy = scrollEvents('.foo');
+
+        spy.when(100).should.be.equal(spy);
+      });
+
+      it('should allow to pass custom function', function() {
+        var spy = scrollEvents('.foo');
+
+        spy.when(function() {
+          return 100
+        }).should.be.equal(spy);
+      });
+
+      describe('custom function', function() {
+        var spy = null,
+          container = null,
+          check;
+
+        before(function() {
+          container = div('when-custom-function-test', 'unscrolled', {height: '3000px'});
+          check = checkClass(container);
+        });
+
+        beforeEach(function(done) {
+          scrollTo(0).then(done, done);
+        });
+
+        afterEach(function() {
+          spy && spy.off();
+          spy = null;
+        });
+
+        after(function() {
+          container.remove();
+        });
+
+        it('should use function as a breakpoint', function(done) {
+          spy = scrollEvents('#when-custom-function-test');
+
+          spy.when(function sparta() {
+            return 300;
+          }).changeClass('unscrolled', 'scrolled');
+
+          scrollTo(100)
+          .then(function() {
+            check(false);
+            return scrollTo(350);
+          })
+          .then(function() {
+            check(true);
+          })
+          .then(done)
+          .catch(done);
+        })
+
+      });
+    });
+
+    describe('#whenDistance', function() {
+      var spy = null,
+        id = 'when-distance-test',
+        byId = '#' + id,
+        container = null,
+        check;
+        
+      before(function() {
+        container = div(id, 'unscrolled', {height: '3000px'});
+        check = checkClass(container);
+      });
+
+      beforeEach(function(done) {
+        scrollTo(0).then(done);
+      });
+
+      afterEach(function() {
+        spy && spy.off();
+        spy = null;
+      });
+
+      after(function() {
+        container.remove();
+      });
+
+      it('should throw when called w/o argument', function() {
+        (function() {
+          scrollEvents(byId).whenDistance();
+        }).should.throw();
+      });
+
+      it('should throw when the first argument is not a number', function() {
+        (function() {
+          scrollEvents(byId).whenDistance('.bar');
+        }).should.throw();
+      });
+
+      it('should set the breakPoint', function(done) {
+        spy = scrollEvents(byId);
+
+        spy.whenDistance(100).should.be.equal(spy)
+
+        spy.changeClass('unscrolled', 'scrolled');
+
+        scrollTo(50)
+        .then(function() {
+          check(false)
+
+          return scrollTo(150);
+        })
+        .then(function() {
+          check(true)
+        })
+        .then(done)
+        .catch(done);
+      });
+    });
+
+    describe('#whenElement* methods', function() {
+      var spy = null,
+        id = 'when-element-test',
+        byId = '#' + id,
+        markerId = 'when-element-marker',
+        marker = '#' + markerId,
+        container = null,
+        mark = null,
+        check;
+        
+      before(function() {
+        container = div(id, 'unscrolled', {height: '3000px'});    
+        check = checkClass(container);
+
+        mark = div(markerId, '', {
+          position: 'absolute',
+          height: '100px',
+          top: '0px'
+        });      
+      });
+
+      beforeEach(function(done) {
+        scrollTo(0).then(done);
+      });
+
+      afterEach(function() {
+        spy && spy.off();
+        spy = null;
+      });
+
+      after(function() {
+        container.remove();
+        mark.remove();
+      });
+
+      it('should throw when called w/o argument', function() {
+        (function() {
+          scrollEvents(byId).whenElement();
+        }).should.throw();
+      });
+
+      it('should throw when the first argument is not a string', function() {
+        (function() {
+          scrollEvents(byId).whenElement(100);
+        }).should.throw();
+      });
+
+      it('should set the breakPoint to be selector\'s top + viewport height', function(done) {
+        spy = scrollEvents(byId);
+
+        spy.whenElement(marker).should.be.equal(spy)
+
+        spy.changeClass('unscrolled', 'scrolled');
+
+        var viewportHeight = window.innerHeight,
+          height = viewportHeight + 200;
+
+        mark.style.top = height + 'px';        
+
+        scrollTo(100)
+        .then(function() {
+          check(false);
+
+          return scrollTo(201);
+        })
+        .then(function() {
+          check(true);
+        })
+        .then(done)
+        .catch(done);
+      });
+
+      it('should set the breakPoint to be selector\'s top', function(done) {
+        spy = scrollEvents(byId);
+
+        spy.whenElement(marker, true).should.be.equal(spy)
+
+        spy.changeClass('unscrolled', 'scrolled');
+
+        mark.style.top = '200px';
+
+        scrollTo(50)
+        .then(function() {
+          check(false);
+
+          return scrollTo(250);
+        })
+        .then(function() {
+          check(true);
+        })
+        .then(done)
+        .catch(done);
+      });
+
+      it('should allow to call whenElementEnters directly', function(done) {
+        spy = scrollEvents(byId);
+
+        spy.whenElementEnters(marker).should.be.equal(spy)
+
+        spy.changeClass('unscrolled', 'scrolled');
+
+        var viewportHeight = document.documentElement.clientHeight,
+          height = viewportHeight + 200;
+
+        mark.style.top = height + 'px';
+
+        scrollTo(100)
+        .then(function() {
+          check(false);
+          return scrollTo(201);
+        })
+        .then(function() {
+          check(true);
+        })
+        .then(done)
+        .catch(done);
+      });
+
+      it('should allow to call whenElementHitsTop directly', function(done) {
+        spy = scrollEvents(byId);
+
+        spy.whenElementHitsTop(marker).should.be.equal(spy)
+
+        spy.changeClass('unscrolled', 'scrolled');
+
+        mark.style.top = '200px';
+
+        scrollTo(50)
+        .then(function() {
+          check(false)
+
+          return scrollTo(250);
+        })
+        .then(function() {
+          check(true);
+        })
+        .then(done)
+        .catch(done);
       });
     });
   });

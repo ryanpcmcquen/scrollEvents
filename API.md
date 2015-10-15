@@ -40,6 +40,8 @@ And the ability to use a selector as a `breakPoint` argument:
 
     scrollEvents.changeStyle(".foo", "height", "200px", "400px", ".bar");
 
+Note that in `1.0.0`+ using a selector as the `breakPoint` argument triggers the event *when* the selector enters the viewport, rather than when it reaches the top. See below on `useViewportHeight` for more info.
+
 Demo: https://jsfiddle.net/ryanpcmcquen/c2Lyqzvp/
 
 =====
@@ -57,7 +59,7 @@ Added in `1.0.0`, we now have a fancy new syntax. You don't have to use it ... b
     scrollEvents('.foo').whenDistance(10).changeClass('unscrolled', 'scrolled10').whenElementEnters('.bar').changeText('unscrolled', '.bar enters the viewport').whenElementHitsTop('.bar').changeText('.bar enters the viewport', '.bar hits top');
 
 
-We also added a new property: `useViewportHeight`. The default behavior is to have it enabled (`true`). What that means, is that when you use a selector as the `breakPoint` argument, the viewport height is added to the calculation. So if you have a box with the class `box` (:neutral_face:), the scrollEvent will trigger when `box` enters the viewport, not when it reaches the top of the page. This behavior may cause some slight breakage if you have been using `0.8.0` or `0.9.0` and you got used to that. To disable it, just have this at the top of your JS file:
+We also added a new property: `useViewportHeight`. The default behavior is to have it enabled (`true`). What that means, is that when you use a selector as the `breakPoint` argument, the viewport height is added to the calculation. So if you have a box with the class `box` ... :neutral_face: ... the scrollEvent will trigger when `box` enters the viewport, not when it reaches the top of the page. This behavior may cause some slight breakage if you have been using `0.8.0` or `0.9.0` and you got used to that. To disable it, just have this at the top of your JS file:
 
     scrollEvents.useViewportHeight = false;
   

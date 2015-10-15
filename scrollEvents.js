@@ -199,15 +199,15 @@
 
         selector = doc.querySelector(selector);
 
-        //we want user be expicit whether she/he wants to trigger event when element hits top
+        // we want user be expicit whether she/he wants to trigger event when element hits top
         if(hitsTop === true) {
           return function() {
             return selector.offsetTop;
           };
         }
-        //enters the viewport
+        // enters the viewport
         return function() {
-          //all modern browser support window.innerHeright
+          // all modern browser support window.innerHeright
           return selector.offsetTop - win.innerHeight;
         };
       },

@@ -2,6 +2,12 @@
 *.sublime-project
 *.sublime-workspace
 
+## vim files
+*~
+
+## zed files
+.zedstate
+
 ## node stuff
 node_modules
 core

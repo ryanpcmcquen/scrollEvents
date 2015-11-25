@@ -26,13 +26,13 @@ That is just the tip of the iceberg though! Check out the [API docs](https://git
 
 Development:
 
-    //cdn.rawgit.com/ryanpcmcquen/scrollEvents/610463650c6ddaf98cb653a3bd911168826fac79/scrollEvents.js
+    <script src="https://cdn.rawgit.com/ryanpcmcquen/scrollEvents/610463650c6ddaf98cb653a3bd911168826fac79/scrollEvents.js"></script>
 
 https://cdn.rawgit.com/ryanpcmcquen/scrollEvents/610463650c6ddaf98cb653a3bd911168826fac79/scrollEvents.js
 
 Minified (~3kB!):
 
-    //cdn.rawgit.com/ryanpcmcquen/scrollEvents/610463650c6ddaf98cb653a3bd911168826fac79/scrollEvents.min.js
+    <script src="https://cdn.rawgit.com/ryanpcmcquen/scrollEvents/610463650c6ddaf98cb653a3bd911168826fac79/scrollEvents.min.js"></script>
 
 https://cdn.rawgit.com/ryanpcmcquen/scrollEvents/610463650c6ddaf98cb653a3bd911168826fac79/scrollEvents.min.js
 

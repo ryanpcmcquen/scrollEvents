@@ -30,7 +30,7 @@ Development:
 
 https://cdn.rawgit.com/ryanpcmcquen/scrollEvents/d5f38d234318b5346d4c5d59f7bf56ef7e07b9b2/scrollEvents.js
 
-Minified (~3kB!):
+Minified (under 3kB!):
 
     <script src="https://cdn.rawgit.com/ryanpcmcquen/scrollEvents/d5f38d234318b5346d4c5d59f7bf56ef7e07b9b2/scrollEvents.min.js"></script>
 

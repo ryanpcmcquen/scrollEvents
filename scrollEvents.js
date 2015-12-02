@@ -1,4 +1,4 @@
-// scrollEvents version 1.0.0
+/* scrollEvents v1.1.0 by ryanpcmcquen */
 //
 // Ryan P.C. McQuen | Everett, WA | ryan.q@linux.com
 //
@@ -19,40 +19,41 @@
 // You may have received a copy of the GNU General Public License along
 // with this program (most likely, a file named COPYING).  If not, see
 // <https://www.gnu.org/licenses/>.
-(function (win, doc) {
+(function() {
   'use strict';
-  if (win.scrollEvents) {
+
+  function throwErr(err) {
+    throw new Error(err);
+  }
+  if (window.scrollEvents) {
     // better to throw a new Error than just a string
-    throw new Error('You already have a global variable named scrollEvents.');
+    throwErr('You already have a global variable named scrollEvents.');
   }
-  // slightly modified/simplified version of underscore.js's throttle (v1.8.3)
-  function throttle(func, wait) {
-    var timeout = null,
-      previous = 0,
-      later = function () {
-        previous = Date.now();
-        timeout = null;
-        func();
-      };
-    return function () {
-      var now = Date.now();
-      if (!previous) previous = now;
-      var remaining = wait - (now - previous);
-      if (remaining <= 0 || remaining > wait) {
-        if (timeout) {
-          clearTimeout(timeout);
-          timeout = null;
+  // taken from odis: https://github.com/ryanpcmcquen/odis
+  var odis = {
+    /* odis v0.1.2 by ryanpcmcquen */
+    throttle: function(func, delay) {
+      // nod to Douglas Adams  ;^)
+      delay = delay || 42;
+      var waiting = false,
+        funcTimeoutId;
+      return function() {
+        if (!waiting) {
+          // very similar to debounce, but 'waiting'
+          // allows execution while being called
+          waiting = true;
+          clearTimeout(funcTimeoutId);
+          funcTimeoutId = setTimeout(function() {
+            func.call();
+            waiting = false;
+          }, delay);
         }
-        previous = now;
-        func();
-      } else if (!timeout) {
-        timeout = setTimeout(later, remaining);
-      }
-    };
-  }
+      };
+    }
+  };
   // select all elements matching selector
   function qsa(selector) {
-    return doc.querySelectorAll(selector);
+    return document.querySelectorAll(selector);
   }
 
   // Function.prototype.call shortcut
@@ -62,9 +63,9 @@
     // slice shortcut
     slice = call.bind([].slice),
     // array to hold all event listeners
-    listeners = [],  
+    listeners = [],
     // run all listeners
-    runner = throttle(function() {
+    runner = odis.throttle(function() {
       each(listeners, function(listener) {
         listener();
       });
@@ -74,7 +75,7 @@
   function addEventListener(fn) {
     if (!listeners.length) {
       // add single dom event listener that will run all registered listeners
-      win.addEventListener('scroll', runner);
+      window.addEventListener('scroll', runner);
     }
 
     listeners.push(fn);
@@ -92,7 +93,7 @@
       // if no more listeners left,
       // unbind
       if (!listeners.length) {
-        win.removeEventListener('scroll', runner);
+        window.removeEventListener('scroll', runner);
       }
     };
   }
@@ -100,63 +101,63 @@
   // all scrollEvents public methods
   // both static and prototypes
   var methods = {
-      /**
-       * Changes element class.
-       */
-      changeClass: function (initial, changed) {
-        if (arguments.length < 2) {
-          throw new Error('You have not supplied all parameters to scrollEvents.changeClass.');
-        }
-
-        return function (el, below) {
-          var classes = el.classList;
-          classes.toggle(initial, !below);
-          classes.toggle(changed, below);
-        };
-      },
-
-      /**
-       * Changes element html content.
-       */
-      changeHTML: function (initial, changed) {
-        if (arguments.length < 2) {
-          throw new Error('You have not supplied all parameters to scrollEvents.changeHTML.');
-        }
-
-        return function (el, below) {
-          el.innerHTML = below ? changed : initial;
-        };
-      },
-
-      /**
-       * Changes element.style.property value.
-       */
-      changeStyle: function (property, initial, changed) {
-        if (arguments.length < 3) {
-          throw new Error('You have not supplied all parameters to scrollEvents.changeStyle.');
-        }
-
-        return function (el, below) {
-          el.style[property] = below ? changed : initial;
-        };
-      },
-
-      /**
-       * Changes element.textContent.
-       */
-      changeText: function (initial, changed) {
-        if (arguments.length < 2) {
-          throw new Error('You have not supplied all parameters to scrollEvents.changeText.');
-        }
-
-        return function (el, below) {
-          el.textContent = below ? changed : initial;
-        };
+    /**
+     * Changes element class.
+     */
+    changeClass: function(initial, changed) {
+      if (arguments.length < 2) {
+        throwErr('You have not supplied all parameters to scrollEvents.changeClass.');
       }
+
+      return function(el, below) {
+        var classes = el.classList;
+        classes.toggle(initial, !below);
+        classes.toggle(changed, below);
+      };
     },
 
-    // all method names
-    methodNames = Object.keys(methods),
+    /**
+     * Changes element html content.
+     */
+    changeHTML: function(initial, changed) {
+      if (arguments.length < 2) {
+        throwErr('You have not supplied all parameters to scrollEvents.changeHTML.');
+      }
+
+      return function(el, below) {
+        el.innerHTML = below ? changed : initial;
+      };
+    },
+
+    /**
+     * Changes element.style.property value.
+     */
+    changeStyle: function(property, initial, changed) {
+      if (arguments.length < 3) {
+        throwErr('You have not supplied all parameters to scrollEvents.changeStyle.');
+      }
+
+      return function(el, below) {
+        el.style[property] = below ? changed : initial;
+      };
+    },
+
+    /**
+     * Changes element.textContent.
+     */
+    changeText: function(initial, changed) {
+      if (arguments.length < 2) {
+        throwErr('You have not supplied all parameters to scrollEvents.changeText.');
+      }
+
+      return function(el, below) {
+        el.textContent = below ? changed : initial;
+      };
+    }
+  },
+
+  // all method names
+  methodNames = Object.keys(methods),
     // when* methods (instance only)
     whenMethods = {
       /**
@@ -164,16 +165,20 @@
        */
       when: function(breakPoint) {
         var type;
-        if(!breakPoint) {
-          throw new Error('breakPoint is required for scrollEvents.when.');
+        if (!breakPoint) {
+          throwErr('breakPoint is required for scrollEvents.when*.');
         }
         type = typeof breakPoint;
 
         switch (type) {
-          case 'function': return breakPoint;
-          case 'string': return whenMethods.whenElement.apply(whenMethods, arguments);
-          case 'number': return whenMethods.whenDistance.apply(whenMethods, arguments);
-          default: throw new Error('Unknown breakPoint type "' + type + '" for scrollEvents.when.');
+          case 'function':
+            return breakPoint;
+          case 'string':
+            return whenMethods.whenElement.apply(whenMethods, arguments);
+          case 'number':
+            return whenMethods.whenDistance.apply(whenMethods, arguments);
+          default:
+            throwErr('Unknown breakPoint type "' + type + '" for scrollEvents.when.');
         }
       },
 
@@ -181,8 +186,8 @@
        * When scroll distance reaches the breakpoint
        */
       whenDistance: function(breakPoint) {
-        if(typeof breakPoint !==  'number') {
-          throw new Error('breakPoint should be a number for scrollEvents.whenDistance.');
+        if (typeof breakPoint !== 'number') {
+          throwErr('breakPoint should be a number for scrollEvents.whenDistance.');
         }
         return function() {
           return breakPoint;
@@ -193,14 +198,14 @@
        * When element selector enters the view port or hits top.
        */
       whenElement: function(selector, hitsTop) {
-        if(typeof selector !== 'string') {
-          throw new Error('breakPoint should be a string for scrollEvents.whenElement.');
+        if (typeof selector !== 'string') {
+          throwErr('breakPoint should be a string for scrollEvents.whenElement.');
         }
 
-        selector = doc.querySelector(selector);
+        selector = document.querySelector(selector);
 
         // we want user be expicit whether she/he wants to trigger event when element hits top
-        if(hitsTop === true) {
+        if (hitsTop === true) {
           return function() {
             return selector.offsetTop;
           };
@@ -208,7 +213,7 @@
         // enters the viewport
         return function() {
           // all modern browsers support window.innerHeright
-          return selector.offsetTop - win.innerHeight;
+          return selector.offsetTop - window.innerHeight;
         };
       },
 
@@ -230,45 +235,45 @@
     whenMethodNames = Object.keys(whenMethods);
 
   function scrollSpy(selector) {
-    var spy = {}, 
-      // all registered callbacks changers.
-      callbacks = [],
+    var spy = {},
+    // all registered callbacks changers.
+    callbacks = [],
       // default breakpoint getter
       defaultBreakPoint;
 
     // spy requires selector.
-    if(!selector) { 
-      throw new Error('Selector is required to apply scroll events to.');
+    if (!selector) {
+      throwErr('Selector is required to apply scroll events to.');
     }
 
     // enhance spy object with public methods.
-    methodNames.forEach(function (name) {
+    methodNames.forEach(function(name) {
       // original method
       var method = methods[name];
 
       // make function that checks if we cross the breakPoint
       function makeBreakPointChecker(args) {
-        var params = slice(args, method.length), 
+        var params = slice(args, method.length),
           breakPoint = params.length;
 
         breakPoint = breakPoint ? whenMethods.when.apply(whenMethods, params) : defaultBreakPoint;
 
         return function() {
-          return win.pageYOffset > breakPoint();
+          return window.pageYOffset > breakPoint();
         };
       }
 
-      spy[name] = function () {
+      spy[name] = function() {
         // previous value
         var previous,
-          args = arguments,
+        args = arguments,
           // make isBelow checker
           isBelow = makeBreakPointChecker(args),
           // make el changer
           callback = method.apply(spy, args);
 
         // add to callback list
-        callbacks.push(function (elements) {
+        callbacks.push(function(elements) {
           // get current value
           var current = isBelow();
 
@@ -283,7 +288,7 @@
               elements = qsa(selector);
             }
             // apply changer to each element
-            each(elements, function (el) {
+            each(elements, function(el) {
               callback(el, current);
             });
           }
@@ -312,7 +317,7 @@
     function listener() {
       var elements;
 
-      each(callbacks, function (cb) {
+      each(callbacks, function(cb) {
         elements = cb(elements);
       });
     }
@@ -370,7 +375,7 @@
 
   // enhance scrollSpy with static methods
   methodNames.forEach(function(name) {
-    scrollSpy[name] = function(selector/*, rest...*/) {
+    scrollSpy[name] = function(selector /*, rest...*/ ) {
       var rest = slice(arguments, 1),
         // create a spy
         spy = scrollSpy(selector);
@@ -380,6 +385,6 @@
     };
   });
 
-  // export 
-  win.scrollEvents = scrollSpy;
-})(window, document);
+  // export
+  window.scrollEvents = scrollSpy;
+}());

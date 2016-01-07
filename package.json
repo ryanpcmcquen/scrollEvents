@@ -1,6 +1,6 @@
 {
   "name": "scrollEvents",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "A pure JavaScript library to do stuff on scroll events.",
   "main": "scrollEvents.js",
   "scripts": {
@@ -17,22 +17,23 @@
   },
   "homepage": "https://ryanpcmcquen.org/scrollEvents/",
   "devDependencies": {
-    "chai": "^3.4.1",
-    "gulp": "^3.9.0",
-    "gulp-jshint": "^2.0.0",
-    "gulp-rename": "^1.2.2",
-    "gulp-size": "^2.0.0",
-    "gulp-uglify": "^1.5.1",
-    "jshint-stylish": "^2.1.0",
-    "karma": "^0.13.15",
-    "karma-chai": "^0.1.0",
-    "karma-chrome-launcher": "^0.2.2",
-    "karma-firefox-launcher": "^0.1.7",
-    "karma-mocha": "^0.2.1",
-    "karma-nyan-reporter": "^0.2.2",
-    "karma-sinon": "^1.0.4",
-    "karma-spec-reporter": "0.0.23",
-    "mocha": "^2.3.4",
-    "sinon": "^1.17.2"
+    "chai": "3.x",
+    "gulp": "3.x",
+    "jshint": "2.x",
+    "gulp-jshint": "2.x",
+    "gulp-rename": "1.x",
+    "gulp-size": "2.x",
+    "gulp-uglify": "1.x",
+    "jshint-stylish": "2.x",
+    "karma": "0.x",
+    "karma-chai": "0.x",
+    "karma-chrome-launcher": "0.x",
+    "karma-firefox-launcher": "0.x",
+    "karma-mocha": "0.x",
+    "karma-nyan-reporter": "0.x",
+    "karma-sinon": "1.x",
+    "karma-spec-reporter": "0.x",
+    "mocha": "2.x",
+    "sinon": "1.x"
   }
 }

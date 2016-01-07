@@ -1,4 +1,4 @@
-/* scrollEvents v1.1.1 by ryanpcmcquen */
+/* scrollEvents v1.1.2 by ryanpcmcquen */
 //
 // Ryan P.C. McQuen | Everett, WA | ryan.q@linux.com
 //
@@ -23,7 +23,10 @@
   'use strict';
 
   function throwErr(err) {
-    throw new Error(err);
+    throw {
+      name: 'Error',
+      message: err
+    };
   }
   if (window.scrollEvents) {
     // better to throw a new Error than just a string
@@ -58,10 +61,10 @@
 
   // Function.prototype.call shortcut
   var call = qsa.call,
-    // alias forEach since we use it so much
-    each = call.bind([].forEach),
+    // alias map since we use it so much
+    each = call.bind(Array.prototype.map),
     // slice shortcut
-    slice = call.bind([].slice),
+    slice = call.bind(Array.prototype.slice),
     // array to hold all event listeners
     listeners = [],
     // run all listeners
@@ -69,7 +72,7 @@
       each(listeners, function(listener) {
         listener();
       });
-    }, 50);
+    });
 
   // add scroll listener
   function addEventListener(fn) {
@@ -101,63 +104,63 @@
   // all scrollEvents public methods
   // both static and prototypes
   var methods = {
-    /**
-     * Changes element class.
-     */
-    changeClass: function(initial, changed) {
-      if (arguments.length < 2) {
-        throwErr('You have not supplied all parameters to scrollEvents.changeClass.');
-      }
+      /**
+       * Changes element class.
+       */
+      changeClass: function(initial, changed) {
+        if (arguments.length < 2) {
+          throwErr('You have not supplied all parameters to scrollEvents.changeClass.');
+        }
 
-      return function(el, below) {
-        var classes = el.classList;
-        classes.toggle(initial, !below);
-        classes.toggle(changed, below);
-      };
+        return function(el, below) {
+          var classes = el.classList;
+          classes.toggle(initial, !below);
+          classes.toggle(changed, below);
+        };
+      },
+
+      /**
+       * Changes element html content.
+       */
+      changeHTML: function(initial, changed) {
+        if (arguments.length < 2) {
+          throwErr('You have not supplied all parameters to scrollEvents.changeHTML.');
+        }
+
+        return function(el, below) {
+          el.innerHTML = below ? changed : initial;
+        };
+      },
+
+      /**
+       * Changes element.style.property value.
+       */
+      changeStyle: function(property, initial, changed) {
+        if (arguments.length < 3) {
+          throwErr('You have not supplied all parameters to scrollEvents.changeStyle.');
+        }
+
+        return function(el, below) {
+          el.style[property] = below ? changed : initial;
+        };
+      },
+
+      /**
+       * Changes element.textContent.
+       */
+      changeText: function(initial, changed) {
+        if (arguments.length < 2) {
+          throwErr('You have not supplied all parameters to scrollEvents.changeText.');
+        }
+
+        return function(el, below) {
+          el.textContent = below ? changed : initial;
+        };
+      }
     },
 
-    /**
-     * Changes element html content.
-     */
-    changeHTML: function(initial, changed) {
-      if (arguments.length < 2) {
-        throwErr('You have not supplied all parameters to scrollEvents.changeHTML.');
-      }
-
-      return function(el, below) {
-        el.innerHTML = below ? changed : initial;
-      };
-    },
-
-    /**
-     * Changes element.style.property value.
-     */
-    changeStyle: function(property, initial, changed) {
-      if (arguments.length < 3) {
-        throwErr('You have not supplied all parameters to scrollEvents.changeStyle.');
-      }
-
-      return function(el, below) {
-        el.style[property] = below ? changed : initial;
-      };
-    },
-
-    /**
-     * Changes element.textContent.
-     */
-    changeText: function(initial, changed) {
-      if (arguments.length < 2) {
-        throwErr('You have not supplied all parameters to scrollEvents.changeText.');
-      }
-
-      return function(el, below) {
-        el.textContent = below ? changed : initial;
-      };
-    }
-  },
-
-  // all method names
-  methodNames = Object.keys(methods),
+    // all method names
+    methodNames = Object.keys(methods),
     // when* methods (instance only)
     whenMethods = {
       /**
@@ -236,8 +239,8 @@
 
   function scrollSpy(selector) {
     var spy = {},
-    // all registered callbacks changers.
-    callbacks = [],
+      // all registered callbacks changers.
+      callbacks = [],
       // default breakpoint getter
       defaultBreakPoint;
 
@@ -247,7 +250,7 @@
     }
 
     // enhance spy object with public methods.
-    methodNames.forEach(function(name) {
+    methodNames.map(function(name) {
       // original method
       var method = methods[name];
 
@@ -266,7 +269,7 @@
       spy[name] = function() {
         // previous value
         var previous,
-        args = arguments,
+          args = arguments,
           // make isBelow checker
           isBelow = makeBreakPointChecker(args),
           // make el changer
@@ -302,7 +305,7 @@
     });
 
     // enhance spy object with when* methods
-    whenMethodNames.forEach(function(name) {
+    whenMethodNames.map(function(name) {
       var method = whenMethods[name];
 
       method = method.apply.bind(method, methodNames);
@@ -374,7 +377,7 @@
   scrollSpy.useViewportHeight = true;
 
   // enhance scrollSpy with static methods
-  methodNames.forEach(function(name) {
+  methodNames.map(function(name) {
     scrollSpy[name] = function(selector /*, rest...*/ ) {
       var rest = slice(arguments, 1),
         // create a spy

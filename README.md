@@ -22,19 +22,13 @@ That is just the tip of the iceberg though! Check out the [API docs](https://git
 
 ### How do I use it? :shipit:
 
-`scrollEvents` is available via RawGit CDN (version `1.1.3`).
-
-Development:
-
-    <script src="https://cdn.rawgit.com/ryanpcmcquen/scrollEvents/8793e40a1b98516dec7b7d22a3c9bfb1026fea55/scrollEvents.js"></script>
-
-https://cdn.rawgit.com/ryanpcmcquen/scrollEvents/8793e40a1b98516dec7b7d22a3c9bfb1026fea55/scrollEvents.js
+`scrollEvents` is available via RawGit CDN (version `1.1.4`).
 
 Minified (under 3kB!):
 
-    <script src="https://cdn.rawgit.com/ryanpcmcquen/scrollEvents/8793e40a1b98516dec7b7d22a3c9bfb1026fea55/scrollEvents.min.js"></script>
+    <script src="https://cdn.rawgit.com/ryanpcmcquen/scrollEvents/ed99a21fba898faa6b6f9ff814be09ca45aac735/scrollEvents.min.js"></script>
 
-https://cdn.rawgit.com/ryanpcmcquen/scrollEvents/8793e40a1b98516dec7b7d22a3c9bfb1026fea55/scrollEvents.min.js
+https://cdn.rawgit.com/ryanpcmcquen/scrollEvents/ed99a21fba898faa6b6f9ff814be09ca45aac735/scrollEvents.min.js
 
 =====
 

@@ -1,4 +1,5 @@
-/*! scrollEvents v1.1.3 by ryanpcmcquen */
+// @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&dn=gpl-2.0.txt GPL-v2-or-later
+/*! scrollEvents v1.1.4 by ryanpcmcquen */
 //
 // Ryan P.C. McQuen | Everett, WA | ryanpcmcquen@member.fsf.org
 //
@@ -394,3 +395,4 @@
   // export
   window.scrollEvents = scrollSpy;
 }());
+// @license-end
